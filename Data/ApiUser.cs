@@ -13,12 +13,12 @@ namespace UserApi.Data
         public int Argent { get; set; }
         public string Permis { get; set; }
         public Guid IdStage { get; set; }
-        //public virtual Stage Stage { get; set; }
+        public virtual Stage Stage { get; set; }
         public int Points { get; set; }
         public int NbSessionsPermis { get; set; }
         public int NbSessionsPolice { get; set; }
         public int NbSessions { get; set; }
-        //public ICollection<Sessions> Sessions { get; set; }
-        //public ICollection<Voitures> Voitures { get; set; }
+        public ICollection<Sessions> Sessions { get; set; }
+        public ICollection<Voitures> Voitures { get; set; }
     }
 }
