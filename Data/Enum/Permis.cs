@@ -2,9 +2,9 @@
 {
     public enum PermisName
     {
+        Retrait,
         NA,
-        PROBATOIRE,
-        DEFINITIF,
-        RETRAIT
+        Probatoire,
+        Definitif,
     }
 }

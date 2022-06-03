@@ -21,7 +21,7 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddSingleton(builder.Configuration.GetSection("JWTSettings").Get<JWTSettings>());
     builder.Services.AddControllers();
 
-    AddCORS(builder);
+    //AddCORS(builder); Permet de définir les CallsOrigins 
     AddDatabase(builder);
     AddJWT(builder);
     AddServices(builder);
@@ -81,10 +81,11 @@ if (app.Environment.IsDevelopment())
 
 ConfigureExceptionHandler(app);
 
+app.MapControllers();
 app.UseAuthentication();
+app.UseAuthorization();
 app.UseHttpsRedirection();
 app.UseRouting();
-app.UseAuthorization();
 app.UseCors();
 app.Run();
 

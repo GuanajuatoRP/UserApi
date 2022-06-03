@@ -2,7 +2,7 @@
 {
     public enum SessionType
     {
-        LIVREUR,
-        BALADE
+        Livreur,
+        Balade
     }
 }
