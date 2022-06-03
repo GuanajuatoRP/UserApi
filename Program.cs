@@ -151,7 +151,7 @@ void AddItentity(WebApplicationBuilder builder)
 
         options.ClaimsIdentity.RoleClaimType = "Roles";
         options.ClaimsIdentity.UserNameClaimType = "Name";
-        options.ClaimsIdentity.EmailClaimType = "Email";
+        options.ClaimsIdentity.EmailClaimType = "DiscordId";
 
         //Password requirement
         options.Password.RequireDigit = true;
@@ -169,7 +169,7 @@ void AddItentity(WebApplicationBuilder builder)
 
         //User
         options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-        options.User.RequireUniqueEmail = true;
+        options.User.RequireUniqueEmail = false;
     })
     .AddDefaultTokenProviders()
     .AddRoles<IdentityRole>()

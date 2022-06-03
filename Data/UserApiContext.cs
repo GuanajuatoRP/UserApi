@@ -9,7 +9,7 @@ namespace UserApi.Data
         public UserApiContext() { }
         public UserApiContext(DbContextOptions<UserApiContext> options) : base(options)
         {
-            //eDatabase.Migrate();
+            //Database.Migrate();
         }
         public DbSet<Voitures> Voitures { get; set; }
         public DbSet<Stage> Stage { get; set; }
