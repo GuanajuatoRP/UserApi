@@ -8,6 +8,6 @@ namespace UserApi.Models.Stages
         public Guid StageId { get; set; }
         public string Name { get; set; }
 
-        public List<UserNameDTO> Users { get; set; }
+        public List<UserNameDTO>? Users { get; set; }
     }
 }

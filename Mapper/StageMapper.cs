@@ -11,7 +11,7 @@ namespace UserApi.Mapper
             {
                 StageId = stage.StageId,
                 Name = stage.Name.ToString(),
-                Users = stage.Users.Select(u => u.ToModel()).ToList(),
+                Users = stage.Users?.Select(u => u.ToModel()).ToList(),
             };
         }
         public static ListStagesDTO ToModelList(this Stage stage)

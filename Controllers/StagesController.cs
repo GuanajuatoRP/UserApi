@@ -33,18 +33,15 @@ namespace UserApi.Controllers
 
         // GET: api/Stages/5
         [HttpGet("{id}")]
+
         public async Task<ActionResult<StageDTO>> GetStage([FromRoute] Guid id, bool withUser = false)
         {
             Stage? stage = null;
-            if (withUser)
-            {
-                stage = await _context.Stage
+            if (withUser) stage = await _context.Stage
                     .Include(s => s.Users)
                     .FirstOrDefaultAsync(s => s.StageId == id);
-            } else
-            {
-                stage = await _context.Stage.FindAsync(id);
-            }
+            else stage = await _context.Stage.FindAsync(id);
+            
 
             if (stage == null) return NotFound();
 
@@ -96,7 +93,7 @@ namespace UserApi.Controllers
         [HttpPost]
         public async Task<IActionResult> PostStage([FromBody] CreateStageDTO dto)
         {
-            if (!ModelState.IsValid) BadRequest(ModelState);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             Stage stage = new Stage
             {
