@@ -12,10 +12,7 @@ namespace UserApi.Models.Auth
         public string Nom { get; set; }
         [Required]
         public string Sexe { get; set; }
-<<<<<<< HEAD
         [Required]
         public string Password { get; set; }
-=======
->>>>>>> AuthController
     }
 }

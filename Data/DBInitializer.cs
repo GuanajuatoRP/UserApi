@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-<<<<<<< HEAD
 using UserApi.Data.Enum;
-=======
->>>>>>> AuthController
 using UserApi.Settings;
 
 namespace UserApi.Data
@@ -30,8 +27,6 @@ namespace UserApi.Data
                 }
             }
 
-            //create admin
-<<<<<<< HEAD
             ApiUser admin = new ApiUser
             {
                 UserName = "Dercraker",
@@ -47,12 +42,6 @@ namespace UserApi.Data
                 NbSessions = 0,
                 NbSessionsPermis = 0,
                 NbSessionsPolice = 0,
-=======
-            var admin = new ApiUser()
-            {
-                UserName = "Dercraker",
-                Email = "152125692618735616"
->>>>>>> AuthController
             };
 
             string pwd = "NMdRx$HqyT8jX6";
