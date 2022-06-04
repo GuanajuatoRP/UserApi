@@ -61,7 +61,6 @@ namespace UserApi.Controllers
                 Nom = dto.Nom,
                 Sexe = dto.Sexe,
                 CreatedAt = DateTime.Now,
-                Argent = 0,
                 Permis = PermisName.NA,
                 IdStage = stage.StageId,
                 Points = 0,
