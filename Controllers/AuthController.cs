@@ -1,7 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 using UserApi.Data;
 using UserApi.Data.Enum;
@@ -26,7 +30,6 @@ namespace UserApi.Controllers
             this.roleManager = roleManager;
             this.jwtSettings = jwtSettings;
         }
-
         [HttpPost]
         [Route("Initialize")]
         public async Task<IActionResult> Initialize()
@@ -37,7 +40,7 @@ namespace UserApi.Controllers
             return Ok(resultMessage);
         }
 
-
+        [AllowAnonymous]
         [HttpPost]
         [Route("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDTO dto)
@@ -77,6 +80,49 @@ namespace UserApi.Controllers
             return Ok($"Le compte a été crée avec le username : {user.UserName}");
             //string? registrationToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
             //return Ok(registrationToken);
+        }
+        
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("Login")]
+        public async Task<IActionResult> Login([FromBody] LoginDTO dto)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            ApiUser? user = await userManager.FindByNameAsync(dto.Username);
+            if (user != null && await userManager.CheckPasswordAsync(user, dto.Password))
+            {
+                IList<string>? userRoles = await userManager.GetRolesAsync(user);
+
+                List<Claim> authClaims = new List<Claim>
+                {
+                    new Claim("Name", user.UserName),
+                    new Claim("DiscordId", user.Email),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                };
+
+                foreach (var userRole in userRoles)
+                {
+                    authClaims.Add(new Claim("Roles", userRole));
+                }
+
+                SymmetricSecurityKey? authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret));
+
+                JwtSecurityToken token = new JwtSecurityToken(
+                    //issuer: JWTSettings.ValidIssuer,
+                    //audience: JWTSettings.ValidAudience,
+                    expires: DateTime.Now.AddMinutes(jwtSettings.DurationTime),
+                    claims: authClaims,
+                    signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+                );
+
+                return Ok(new
+                {
+                    token = new JwtSecurityTokenHandler().WriteToken(token),
+                    exipration = token.ValidTo
+                });
+            }
+            else return Unauthorized();
         }
 
         //[HttpPost]
