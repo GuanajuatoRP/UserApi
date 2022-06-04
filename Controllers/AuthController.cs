@@ -42,15 +42,23 @@ namespace UserApi.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
+<<<<<<< HEAD
             ApiUser userExists = await userManager.FindByNameAsync($"{dto.Prenom}{dto.Nom}");
             if (userExists != null) return BadRequest("L'utilisateur existe déjà");
 
+=======
+            ApiUser userExists = await userManager.FindByNameAsync($"{dto.Prenom} {dto.Nom}");
+            if (userExists != null) return BadRequest("L'utilisateur existe déjà");
+>>>>>>> AuthController
             Stage? stage = await _context.Stage.FirstOrDefaultAsync(s => s.Name == StageName.NA);
             ApiUser user = new ApiUser
             {
                 UserName = $"{dto.Prenom}{dto.Nom}",
                 Email = dto.DiscordId,
+<<<<<<< HEAD
                 EmailConfirmed = true,
+=======
+>>>>>>> AuthController
                 Prenom = dto.Prenom,
                 Nom = dto.Nom,
                 Sexe = dto.Sexe,
@@ -64,13 +72,18 @@ namespace UserApi.Controllers
                 NbSessionsPolice = 0,
             };
 
+<<<<<<< HEAD
             IdentityResult? result = await userManager.CreateAsync(user, dto.Password);
+=======
+            IdentityResult? result = await userManager.CreateAsync(user);
+>>>>>>> AuthController
             if (result.Succeeded)
             {
                 await userManager.AddToRoleAsync(user, Roles.Visiteur);
             }
             else return BadRequest(result.Errors);
 
+<<<<<<< HEAD
             return Ok($"Le compte a été crée avec le username : {user.UserName}");
             //string? registrationToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
             //return Ok(registrationToken);
@@ -114,6 +127,30 @@ namespace UserApi.Controllers
             else return NotFound("Aucun user avec cet id");
 
             return NoContent();
+=======
+            string? registrationToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
+            return Ok(registrationToken);
+        }
+
+        [HttpPost]
+        [Route("ConfirmDiscord")]
+        public async Task<IActionResult> ConfirmDiscord([FromBody] ConfirmDiscordDTO dto)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            ApiUser user = await userManager.FindByEmailAsync(dto.DiscordId);
+            if (user == null) return BadRequest("Nom d'utilisateur invalide");
+
+            IdentityResult? result = await userManager.AddPasswordAsync(user, dto.Password);
+            if (!result.Succeeded) return BadRequest(result.Errors);
+
+            if (user.EmailConfirmed) return BadRequest("Le compte discord est déjà validé");
+
+            result = await userManager.ConfirmEmailAsync(user, dto.ConfirmationToken);
+            if (!result.Succeeded) return BadRequest(result.Errors);
+
+            return Ok("Le compte discord a été validé avec succès");
+>>>>>>> AuthController
         }
     }
 }
