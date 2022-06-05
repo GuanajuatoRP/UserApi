@@ -14,5 +14,7 @@ namespace UserApi.Models.Auth
         public string Sexe { get; set; }
         [Required]
         public string Password { get; set; }
+        [Required]
+        public int Argent { get; set; }
     }
 }
