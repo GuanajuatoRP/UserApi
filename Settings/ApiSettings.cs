@@ -2,5 +2,6 @@
 {
     public class ApiSettings
     {
+        public string SecondConnectionString { get; set; }
     }
 }

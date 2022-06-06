@@ -15,15 +15,11 @@ namespace UserApi.Controllers
     {
         private readonly UserApiContext _context;
         private readonly UserManager<ApiUser> userManager;
-        private readonly RoleManager<IdentityRole> roleManager;
-        private readonly JWTSettings jwtSettings;
 
         public PermisController(UserApiContext context, UserManager<ApiUser> userManager, RoleManager<IdentityRole> roleManager, JWTSettings jwtSettings)
         {
             _context = context;
             this.userManager = userManager;
-            this.roleManager = roleManager;
-            this.jwtSettings = jwtSettings;
         }
 
         [HttpGet]
@@ -48,7 +44,7 @@ namespace UserApi.Controllers
             ApiUser? entity = await userManager.FindByEmailAsync(DiscordId);
             if (entity == null) return BadRequest("Aucun utilisateur existe avec cet Id");
 
-            //MAx 12 pts
+            //Max 12 pts
             if (entity.Points + dto.Value > 12 ) entity.Points = 12;
             else entity.Points += dto.Value;
 
