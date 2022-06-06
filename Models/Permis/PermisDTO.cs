@@ -1,4 +1,5 @@
-﻿using UserApi.Data.Enum;
+﻿
+using UserApi.Data;
 
 namespace UserApi.Models.Permis
 {
@@ -9,6 +10,7 @@ namespace UserApi.Models.Permis
         public int Points { get; set; }
 
         public int NbSessionsPermis { get; set; }
+        public string? Stage { get; set; }
 
     }
 }

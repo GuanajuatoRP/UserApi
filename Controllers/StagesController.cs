@@ -9,6 +9,7 @@ using UserApi.Data;
 using UserApi.Mapper;
 using UserApi.Models.Stages;
 
+//CRUD FOR STAGE TABLE
 namespace UserApi.Controllers
 {
     [Route("api/[controller]")]
@@ -16,7 +17,7 @@ namespace UserApi.Controllers
     public class StagesController : ControllerBase
     {
         private readonly UserApiContext _context;
-
+        
         public StagesController(UserApiContext context)
         {
             _context = context;

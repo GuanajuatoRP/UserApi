@@ -12,7 +12,8 @@ namespace UserApi.Mapper
                 Username = user.UserName,
                 Permis = user.Permis.ToString(),
                 Points = user.Points,
-                NbSessionsPermis = user.NbSessionsPermis
+                NbSessionsPermis = user.NbSessionsPermis,
+                Stage = user.Stage.Name.ToString(),
             };
         }
     }
