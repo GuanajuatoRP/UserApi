@@ -1,10 +1,12 @@
-﻿using UserApi.Data.Enum;
+﻿using System.ComponentModel.DataAnnotations;
+using UserApi.Data.Enum;
 
 namespace UserApi.Data
 {
     public class Voitures
     {
-        public Guid KeyCar { get; set; }
+        [Key]
+        public Guid? KeyCar { get; set; }
         public string IdUser { get; set; }
         public ApiUser User { get; set; }
         public Guid IdCar { get; set; }

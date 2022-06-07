@@ -62,7 +62,7 @@ namespace UserApi.Controllers
                             EngineDisplacement = Convert.ToDecimal(reader["EngineDisplacement"]),
                             NbCylindre = Convert.ToInt32(reader["NbCylindre"]),
                             EnginePosition = (EnginePosition)Enum.Parse(typeof(EnginePosition), reader["EnginePosition"].ToString()),
-                            //Aspiration = (Aspiration)Enum.Parse(typeof(Aspiration), reader["Aspiration"].ToString()),
+                            Aspiration = (Aspiration)Enum.Parse(typeof(Aspiration), reader["Aspiration"].ToString()),
                             PrixModif = 0,
                             PrixTotal = Convert.ToInt32(reader["Price"]),
                             Speed = Convert.ToDecimal(reader["Speed"]),
@@ -72,7 +72,7 @@ namespace UserApi.Controllers
                             Braking = Convert.ToDecimal(reader["Braking"]),
                             Offroad = Convert.ToDecimal(reader["Offroad"]),
                             Pi = Convert.ToInt32(reader["PI"]),
-                            //Class = (Class)Enum.Parse(typeof(Class), reader["Class"].ToString()),
+                            Class = (Class)Enum.Parse(typeof(Class), reader["Class"].ToString()),
                             Imatriculation = "",
                         };
                     }
@@ -83,6 +83,7 @@ namespace UserApi.Controllers
                 }
             }
 
+            if (car == null) return BadRequest("Aucune voiture trouvé avec cette id");
             
 
             try
