@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using UserApi.Data;
@@ -16,10 +17,12 @@ namespace UserApi.Controllers
     public class SessionsController : ControllerBase
     {
         private readonly UserApiContext _context;
+        private readonly UserManager<ApiUser> userManager;
 
-        public SessionsController(UserApiContext context)
+        public SessionsController(UserApiContext context, UserManager<ApiUser> userManager)
         {
             _context = context;
+            this.userManager = userManager;
         }
 
         // GET: api/Sessions
@@ -83,6 +86,83 @@ namespace UserApi.Controllers
             }
 
             return Ok($"Id de la sessions modifier : {id}");
+        }
+        
+        [HttpPut]
+        [Route("add/{id}")]
+        public async Task<IActionResult> AddUserSessions([FromRoute] Guid id, [FromBody] AddUserDTO dto)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            Sessions? session = await _context.Sessions
+                .Include(s => s.Users)
+                .FirstOrDefaultAsync(s => s.SessionId == id);
+            if (session == null) return NotFound("Aucune sessions n'existe avec cet id");
+
+            ApiUser user = await userManager.FindByEmailAsync(dto.DiscordId);
+            if (user == null) return NotFound("Aucun user n'existe avec cet id");
+
+            if (session.Users.Contains(user)) return BadRequest("L'utilisateur spécifier est déja présent dans la session");
+            session.Users.Add(user);
+            session.NbParticipant++;
+
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException e)
+            {
+                if (!SessionsExists(id))
+                {
+                    return NotFound(e.Message);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return Ok($"{user.UserName} a été ajouté a la session : {id}");
+        }
+
+        [HttpPut]
+        [Route("remove/{id}")]
+        public async Task<IActionResult> RemoveUserSessions([FromRoute] Guid id, [FromBody] AddUserDTO dto)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            Sessions? session = await _context.Sessions
+                .Include(s => s.Users)
+                .FirstOrDefaultAsync(s => s.SessionId == id);
+            if (session == null) return NotFound("Aucune sessions n'existe avec cet id");
+
+            ApiUser user = await userManager.FindByEmailAsync(dto.DiscordId);
+            if (user == null) return NotFound("Aucun user n'existe avec cet id");
+
+            if (!session.Users.Contains(user)) return BadRequest("L'utilisateur spécifier n'est pas présent dans la séssions");
+            
+            session.Users.Remove(user);
+            session.NbParticipant--;
+
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException e)
+            {
+                if (!SessionsExists(id))
+                {
+                    return NotFound(e.Message);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return Ok($"{user.UserName} a été retirer de la session : {id}");
         }
 
         // POST: api/Sessions
