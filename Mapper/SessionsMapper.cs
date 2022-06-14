@@ -12,7 +12,7 @@ namespace UserApi.Mapper
                 Type = dto.Type,
                 Debut = dto.Debut.ToString("dd/MM/yyyy HH:mm"),
                 Fin = dto.Debut.AddHours(1).ToString("dd/MM/yyyy HH:mm"),
-                NbParticipant = dto.NbParticipant
+                NbParticipant = 0
             };
         }
         
@@ -25,6 +25,7 @@ namespace UserApi.Mapper
                 Debut = session.Debut,
                 Fin = session.Fin,
                 NbParticipant = session.NbParticipant,
+                SessionNumber = session.SessionNumber,
                 Users = session.Users?.Select(u => u.ToModel()).ToList()
             };
         }
@@ -35,9 +36,10 @@ namespace UserApi.Mapper
             {
                 SessionId = session.SessionId,
                 Type = session.Type.ToString(),
-                //Debut = session.Debut,
-                //Fin = session.Fin,
-                NbParticipant = session.NbParticipant
+                Date = session.Debut,
+                NbParticipant = session.NbParticipant,
+                SessionNumber = session.SessionNumber,
+                Users = session.Users?.Select(u => u.ToModel()).ToList()
             };
         }
     }

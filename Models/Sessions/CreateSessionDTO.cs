@@ -9,6 +9,5 @@ namespace UserApi.Models.Sessions
         public SessionType Type { get; set; }
         [Required]
         public DateTime Debut { get; set; }
-        public int NbParticipant { get; set; }
     }
 }

@@ -27,17 +27,25 @@ namespace UserApi.Controllers
 
         // GET: api/Sessions
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SessionsDTO>>> GetSessions()
+        public async Task<ActionResult<IEnumerable<SessionsDTO>>> GetSessions(bool withUSers = false)
         {
-            List<Sessions> sessions = await _context.Sessions.ToListAsync();
+            List<Sessions> sessions;
+
+            if (withUSers) sessions = await _context.Sessions
+                    .Include(s => s.Users)
+                    .ToListAsync();
+            else sessions = await _context.Sessions.ToListAsync();
 
             if (sessions == null) return NotFound("Aucunne sessions trouvée");
+
+            sessions.Reverse();
 
             return sessions.Select(s => s.ToModelList()).ToList();
         }
 
         // GET: api/Sessions/5
-        [HttpGet("{id}")]
+        [HttpGet]
+        [Route("{id}")]
         public async Task<ActionResult<SessionDTO>> GetSessions([FromRoute] Guid id, bool withUSers = false)
         {
             Sessions? session = null;
@@ -55,7 +63,8 @@ namespace UserApi.Controllers
 
         // PUT: api/Sessions/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPut]
+        [Route("{id}")]
         public async Task<IActionResult> PutSessions([FromRoute] Guid id, [FromBody] EditSessionDTO dto)
         {
             if (id != dto.SessionId) return BadRequest("L'id est != de celui du DTO");
@@ -189,7 +198,8 @@ namespace UserApi.Controllers
         }
 
         // DELETE: api/Sessions/5
-        [HttpDelete("{id}")]
+        [HttpDelete]
+        [Route("{id}")]
         public async Task<IActionResult> DeleteSessions([FromRoute] Guid id)
         {
             Sessions? sessions = await _context.Sessions.FindAsync(id);

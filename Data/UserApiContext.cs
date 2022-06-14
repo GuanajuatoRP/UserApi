@@ -33,6 +33,7 @@ namespace UserApi.Data
             builder.Entity<Sessions>(s =>
             {
                 s.HasKey(s => s.SessionId);
+                s.Property( s => s.SessionNumber).ValueGeneratedOnAdd();
             });
             
             builder.Entity<Stage>(s =>
