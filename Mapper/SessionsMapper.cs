@@ -35,8 +35,8 @@ namespace UserApi.Mapper
             {
                 SessionId = session.SessionId,
                 Type = session.Type.ToString(),
-                Debut = session.Debut,
-                Fin = session.Fin,
+                //Debut = session.Debut,
+                //Fin = session.Fin,
                 NbParticipant = session.NbParticipant
             };
         }

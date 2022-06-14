@@ -21,7 +21,7 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddSingleton(builder.Configuration.GetSection("JWTSettings").Get<JWTSettings>());
     builder.Services.AddControllers();
 
-    //AddCORS(builder); Permet de définir les CallsOrigins 
+    AddCORS(builder); //Permet de définir les CallsOrigins 
     AddDatabase(builder);
     AddJWT(builder);
     AddServices(builder);
@@ -97,7 +97,8 @@ void AddCORS(WebApplicationBuilder builder)
     {
         o.AddDefaultPolicy(builder =>
         {
-            builder.WithOrigins(originsAllowed.ToArray()).AllowAnyHeader().AllowAnyMethod().Build();
+            builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().Build();
+            //builder.WithOrigins(originsAllowed.ToArray()).AllowAnyHeader().AllowAnyMethod().Build();
         });
     });
 }

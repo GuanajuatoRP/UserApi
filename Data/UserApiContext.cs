@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using UserApi.Controllers;
 
 namespace UserApi.Data
 {
@@ -14,6 +15,7 @@ namespace UserApi.Data
         public DbSet<Voitures> Voitures { get; set; }
         public DbSet<Stage> Stage { get; set; }
         public DbSet<Sessions> Sessions { get; set; }
+        public DbSet<Markdown> Markdown { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -41,6 +43,11 @@ namespace UserApi.Data
             builder.Entity<Voitures>(v =>
             {
                 v.HasKey(v => v.KeyCar);
+            });
+
+            builder.Entity<Markdown>(m =>
+            {
+                m.HasKey(m => m.TextId);
             });
         }
     }
