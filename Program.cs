@@ -124,14 +124,16 @@ void AddJWT(WebApplicationBuilder builder)
         x.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
-            ValidateIssuer = true,
-            ValidateAudience = true,
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            RequireAudience = false,
             //ValidAudience = jwtSettings.ValidAudience,
             //ValidIssuer = jwtSettings.ValidIssuer,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret)),
             ValidateLifetime = true,
             RoleClaimType = "Roles",
             NameClaimType = "Name",
+            
         };
     });
 

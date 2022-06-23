@@ -105,23 +105,61 @@ namespace UserApi.Controllers
                     authClaims.Add(new Claim("Roles", userRole));
                 }
 
-                SymmetricSecurityKey? authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret));
+                SymmetricSecurityKey authSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Secret));
 
-                JwtSecurityToken token = new JwtSecurityToken(
-                    //issuer: JWTSettings.ValidIssuer,
-                    //audience: JWTSettings.ValidAudience,
-                    expires: DateTime.Now.AddMinutes(jwtSettings.DurationTime),
-                    claims: authClaims,
-                    signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
-                );
+                JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+                SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
+                {
+                    Subject = new ClaimsIdentity(authClaims),
+                    Expires = DateTime.UtcNow.AddMinutes(jwtSettings.DurationTime),
+                    Issuer = jwtSettings.ValidIssuer,
+                    Audience = jwtSettings.ValidAudience,
+                    SigningCredentials = new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256Signature)
+                };
+
+                SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
+
+                //JwtSecurityToken token = new JwtSecurityToken(
+                //    issuer: JWTSettings.ValidIssuer,
+                //    audience: JWTSettings.ValidAudience,
+                //    expires: DateTime.Now.AddMinutes(jwtSettings.DurationTime),
+                //    claims: authClaims,
+                //    signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+                //);
 
                 return Ok(new
                 {
-                    token = new JwtSecurityTokenHandler().WriteToken(token),
+                    token = tokenHandler.WriteToken(token),
                     exipration = token.ValidTo
                 });
             }
             else return Unauthorized();
+        }
+        [Authorize]
+        [HttpPost]
+        [Route("TokenTest")]
+        public async Task<IActionResult> TokenTest([FromBody] string token)
+        {
+            SymmetricSecurityKey authSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Secret));
+            
+            var tokenHandler = new JwtSecurityTokenHandler();
+            try
+            {
+                tokenHandler.ValidateToken(token, new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidIssuer = jwtSettings.ValidIssuer,
+                    ValidAudience = jwtSettings.ValidAudience,
+                    IssuerSigningKey = authSigningKey
+                }, out SecurityToken validatedToken);
+            }
+            catch
+            {
+                return Unauthorized();
+            }
+            return Ok();
         }
 
         //[HttpPost]
