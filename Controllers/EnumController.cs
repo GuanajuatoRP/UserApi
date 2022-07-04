@@ -6,6 +6,9 @@ using UserApi.Models.Enum;
 
 namespace UserApi.Controllers
 {
+    /// <summary>
+    /// Obtenir la liste des enums
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class EnumController : ControllerBase
@@ -19,6 +22,9 @@ namespace UserApi.Controllers
             this.userManager = userManager;
         }
 
+        /// <summary>
+        /// Liste des permis
+        /// </summary>
         [HttpGet]
         [Route("PermisName")]
         public async Task<ActionResult<List<EnumvalDTO>>> GetPemisName()
@@ -26,6 +32,10 @@ namespace UserApi.Controllers
             return Enum.GetValues(typeof(PermisName)).Cast<PermisName>()
                 .Select(p => new EnumvalDTO { Index = (int)p, Name = p.ToString() }).ToList();
         }
+
+        /// <summary>
+        /// Liste des type de session
+        /// </summary>
         [HttpGet]
         [Route("SessionType")]
         public async Task<ActionResult<List<EnumvalDTO>>> GetSessionType()
@@ -33,6 +43,10 @@ namespace UserApi.Controllers
             return Enum.GetValues(typeof(SessionType)).Cast<SessionType>()
                 .Select(p => new EnumvalDTO { Index = (int)p, Name = p.ToString() }).ToList();
         }
+
+        /// <summary>
+        /// Liste des nom de stage
+        /// </summary>
         [HttpGet]
         [Route("StageName")]
         public async Task<ActionResult<List<EnumvalDTO>>> GetStageName()
@@ -40,6 +54,10 @@ namespace UserApi.Controllers
             return Enum.GetValues(typeof(StageName)).Cast<StageName>()
                 .Select(p => new EnumvalDTO { Index = (int)p, Name = p.ToString() }).ToList();
         }
+
+        /// <summary>
+        /// Liste des type d'aspiration (Turbo)
+        /// </summary>
         [HttpGet]
         [Route("Aspiration")]
         public async Task<ActionResult<List<EnumvalDTO>>> GetAspiration()
@@ -47,6 +65,10 @@ namespace UserApi.Controllers
             return Enum.GetValues(typeof(Aspiration)).Cast<Aspiration>()
                 .Select(p => new EnumvalDTO { Index = (int)p, Name = p.ToString() }).ToList();
         }
+
+        /// <summary>
+        /// Liste des class de voiture
+        /// </summary>
         [HttpGet]
         [Route("Class")]
         public async Task<ActionResult<List<EnumvalDTO>>> GetClass()
@@ -54,6 +76,10 @@ namespace UserApi.Controllers
             return Enum.GetValues(typeof(Class)).Cast<Class>()
                 .Select(p => new EnumvalDTO { Index = (int)p, Name = p.ToString() }).ToList();
         }
+
+        /// <summary>
+        /// Liste des type de voiture
+        /// </summary>
         [HttpGet]
         [Route("CarType")]
         public async Task<ActionResult<List<EnumvalDTO>>> GetCarType()
@@ -61,6 +87,10 @@ namespace UserApi.Controllers
             return Enum.GetValues(typeof(CarType)).Cast<CarType>()
                 .Select(p => new EnumvalDTO { Index = (int)p, Name = p.ToString() }).ToList();
         }
+
+        /// <summary>
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("EnginePosition")]
         public async Task<ActionResult<List<EnumvalDTO>>> GetEnginePosition()

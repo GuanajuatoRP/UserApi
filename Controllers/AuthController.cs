@@ -14,6 +14,9 @@ using UserApi.Settings;
 
 namespace UserApi.Controllers
 {
+    /// <summary>
+    /// Contrôlleur d'Auth et de gestion des utilisateurs
+    /// </summary>
     [Authorize]
     [Route("")]
     [ApiController]
@@ -31,7 +34,11 @@ namespace UserApi.Controllers
             this.roleManager = roleManager;
             this.jwtSettings = jwtSettings;
         }
-        [Authorize(Roles = "Admin")]
+
+        /// <summary>
+        /// Initialise les table avec les rôles et l'utilisateur Admin
+        /// </summary>
+        /// <response code="200 + Message"></response>
         [HttpPost]
         [Route("Initialize")]
         public async Task<IActionResult> Initialize()
@@ -42,6 +49,12 @@ namespace UserApi.Controllers
             return Ok(resultMessage);
         }
 
+        /// <summary>
+        /// Permet de register un user dans la DB
+        /// </summary>
+        /// <param name="dto">Model de l'utilisateur</param>
+        /// <response code="400 + Message"></response>
+        /// <response code="200 + Message"></response>
         [AllowAnonymous]
         [HttpPost]
         [Route("register")]
@@ -82,7 +95,15 @@ namespace UserApi.Controllers
             //string? registrationToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
             //return Ok(registrationToken);
         }
-        
+
+
+        /// <summary>
+        /// Permet de login un user dans la DB
+        /// </summary>
+        /// <param name="dto">Model de login d'un user</param>
+        /// <response code="400 + Message"></response>
+        /// <response code="401">Erreur de mdp ou id</response>
+        /// <response code="200">Token + date d'expiration</response>
         [AllowAnonymous]
         [HttpPost]
         [Route("Login")]
@@ -107,13 +128,13 @@ namespace UserApi.Controllers
                     authClaims.Add(new Claim("Roles", userRole));
                 }
 
-                SymmetricSecurityKey? authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret));
+                SymmetricSecurityKey authSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Secret));
 
                 JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
                 SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
                 {
                     Subject = new ClaimsIdentity(authClaims),
-                    Expires = DateTime.UtcNow.AddHours(jwtSettings.DurationTime),
+                    Expires = DateTime.UtcNow.AddMinutes(jwtSettings.DurationTime),
                     Issuer = jwtSettings.ValidIssuer,
                     Audience = jwtSettings.ValidAudience,
                     SigningCredentials = new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256Signature)
@@ -121,9 +142,17 @@ namespace UserApi.Controllers
 
                 SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
 
+                //JwtSecurityToken token = new JwtSecurityToken(
+                //    issuer: JWTSettings.ValidIssuer,
+                //    audience: JWTSettings.ValidAudience,
+                //    expires: DateTime.Now.AddMinutes(jwtSettings.DurationTime),
+                //    claims: authClaims,
+                //    signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+                //);
+
                 return Ok(new
                 {
-                    token = new JwtSecurityTokenHandler().WriteToken(token),
+                    token = tokenHandler.WriteToken(token),
                     exipration = token.ValidTo
                 });
             }
@@ -150,6 +179,30 @@ namespace UserApi.Controllers
                 }, out SecurityToken validatedToken);
 
 
+        /// <summary>
+        /// Teste la validiter d'un token
+        /// </summary>
+        /// <param name="token">token a check</param>
+        /// <response code="401">Token non valide || Pas la permission d'acceder a cette endpoint</response>
+        /// <response code="200">Token valide</response>
+        [HttpPost]
+        [Route("TokenTest")]
+        public async Task<IActionResult> TokenTest([FromBody] string token)
+        {
+            SymmetricSecurityKey authSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Secret));
+            
+            var tokenHandler = new JwtSecurityTokenHandler();
+            try
+            {
+                tokenHandler.ValidateToken(token, new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidIssuer = jwtSettings.ValidIssuer,
+                    ValidAudience = jwtSettings.ValidAudience,
+                    IssuerSigningKey = authSigningKey
+                }, out SecurityToken validatedToken);
             }
             catch
             {
@@ -178,6 +231,13 @@ namespace UserApi.Controllers
         //    return Ok("Le compte discord a été validé avec succès");
         //}
 
+
+        /// <summary>
+        /// Check si l'utilisateur existe dans la DB
+        /// </summary>
+        /// <param name="DiscordId">discord id de l'utilisateur a check</param>
+        /// <response code="400 + Message"></response>
+        /// <response code="200">Username de l'utilisateur</response>
         [HttpGet]
         [Route("UserExist/{DiscordId}")]
         public async Task<IActionResult> UserExist([FromRoute] string DiscordId)
@@ -187,7 +247,12 @@ namespace UserApi.Controllers
             else return Ok(user.UserName);
         }
 
-        [Authorize(Roles = "Admin")]
+        /// <summary>
+        /// Permet de suprimer un utilisateur
+        /// </summary>
+        /// <param name="DiscordId">discord id de l'utilisateur a delete</param>
+        /// <response code="404 + Message"></response>
+        /// <response code="204">Utilisateur suprimer</response>
         [HttpDelete]
         [Route("DeleteUser/{DiscordId}")]
         public async Task<IActionResult> DeleteUser([FromRoute] string DiscordId)
@@ -199,6 +264,12 @@ namespace UserApi.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Crée une requette pour avoir un token de changement de mot de pase
+        /// </summary>
+        /// <param name="dto">Model de changement de mot de passe</param>
+        /// <response code="400 + Message"></response>
+        /// <response code="200">Token permettant de changer de mot de passe</response>
         [HttpPost]
         [Route("FrogotPassword")]
         public async Task<IActionResult> FrogotPassword([FromBody] FrogotPasswordDTO dto)
@@ -212,7 +283,12 @@ namespace UserApi.Controllers
             return Ok(token);
         }
 
-        [Authorize(Roles = "Admin")]
+        /// <summary>
+        /// Reset un mot de passe avec un token de changement de mot de passe 
+        /// </summary>
+        /// <param name="dto">Model de changement de mot de passe</param>
+        /// <response code="400 + Message"></response>
+        /// <response code="200">Confirmation</response>
         [HttpPost]
         [Route("ResetPassword")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO dto)

@@ -11,6 +11,9 @@ using UserApi.Models.Markdown;
 
 namespace UserApi.Controllers
 {
+    /// <summary>
+    /// Obtenir l'ensemble des textes markdown
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class MarkdownsController : ControllerBase
@@ -22,7 +25,10 @@ namespace UserApi.Controllers
             _context = context;
         }
 
-        // GET: api/Markdowns
+        /// <summary>
+        /// Get l'ensemble des markdown
+        /// </summary>
+        /// <returns>Liste de model de md</returns>
         [HttpGet]
         [Route("web")]
         public async Task<IActionResult> GetMarkdown()
@@ -31,11 +37,17 @@ namespace UserApi.Controllers
             return Ok(mdList.ToModelList());
         }
 
-        // GET: api/Markdowns/5
+        /// <summary>
+        /// Get un MD donner par sont id
+        /// </summary>
+        /// <param name="id">ID de MD</param>
+        /// <response code="400 + Message"></response>
+        /// <returns>Model de MD</returns>
         [HttpGet]
         [Route("{id}")]
         public async Task<ActionResult<MarkdownDTO>> GetMarkdown([FromRoute] Guid id)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             Markdown? md = await _context.Markdown.FindAsync(id);
 
             if (md == null) return NotFound();
@@ -44,12 +56,18 @@ namespace UserApi.Controllers
             return md.ToModel();
         }
 
-        // PUT: api/Markdowns/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Edit un md
+        /// </summary>
+        /// <param name="id">id du texte markdown a edit</param>
+        /// <param name="dto">Model de la modif</param>
+        /// <response code="400 + Message"></response>
+        /// <response code="200">Confirmation</response>
         [HttpPut]
         [Route("{id}")]
         public async Task<IActionResult> PutMarkdown([FromRoute] Guid id, [FromBody] MarkdownDTO dto)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             if (id != dto.TextId) return BadRequest("Les deux ids sont !=");
             
 
@@ -74,8 +92,12 @@ namespace UserApi.Controllers
             return Ok("Text Modifié");
         }
 
-        // POST: api/Markdowns
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Creation d'un nouveau texte en markdown
+        /// </summary>
+        /// <param name="dto">Model du texte a ajouté</param>
+        /// <response code="400 + Message"></response>
+        /// <response code="200">Confirmation d'ajout + id</response>
         [HttpPost]
         public async Task<IActionResult> PostMarkdown(AddMdDTO dto)
         {
@@ -103,11 +125,18 @@ namespace UserApi.Controllers
             return Ok($"Id du nouveau text : {md.TextId}");
         }
 
-        // DELETE: api/Markdowns/5
+        /// <summary>
+        /// suprimer un texte markdown
+        /// </summary>
+        /// <param name="id">id du md a supprimer</param>
+        /// <response code="400 + Message"></response>
+        /// <response code="404">texte Md non trouver</response>
+        /// <response code="204">Texte delete</response>
         [HttpDelete]
         [Route("{id}")]
         public async Task<IActionResult> DeleteMarkdown(Guid id)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             Markdown? md = await _context.Markdown.FindAsync(id);
             if (md == null) return NotFound();
 

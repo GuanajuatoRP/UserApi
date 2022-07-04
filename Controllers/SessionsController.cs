@@ -12,6 +12,9 @@ using UserApi.Models.Sessions;
 
 namespace UserApi.Controllers
 {
+    /// <summary>
+    /// Gère les sessions
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class SessionsController : ControllerBase
@@ -25,10 +28,16 @@ namespace UserApi.Controllers
             this.userManager = userManager;
         }
 
-        // GET: api/Sessions
+        /// <summary>
+        /// Get la liste des sessions
+        /// </summary>
+        /// <param name="withUSers">Bool, inclure ou non les user aux sessiosn</param>
+        /// <response code="400 + Message"></response>
+        /// <returns>Liste de sessions</returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SessionsDTO>>> GetSessions(bool withUSers = false)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             List<Sessions> sessions;
 
             if (withUSers) sessions = await _context.Sessions
@@ -43,11 +52,18 @@ namespace UserApi.Controllers
             return sessions.Select(s => s.ToModelList()).ToList();
         }
 
-        // GET: api/Sessions/5
+        /// <summary>
+        /// Get une session donner
+        /// </summary>
+        /// <param name="id">id de sessions</param>
+        /// <param name="withUSers">Inclure les user aux sessions</param>
+        /// <response code="400 + Message"></response>
+        /// <returns>Model sessions</returns>
         [HttpGet]
         [Route("{id}")]
         public async Task<ActionResult<SessionDTO>> GetSessions([FromRoute] Guid id, bool withUSers = false)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             Sessions? session = null;
 
             if (withUSers) session = await _context.Sessions
@@ -61,8 +77,13 @@ namespace UserApi.Controllers
             return session.ToModel();
         }
 
-        // PUT: api/Sessions/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Edit une sessions
+        /// </summary>
+        /// <param name="id">Id de la sessions</param>
+        /// <param name="dto">model de modif de sessions</param>
+        /// <response code="400 + Message"></response>
+        /// <response code="200">Confirmation + id sessions</response>
         [HttpPut]
         [Route("{id}")]
         public async Task<IActionResult> PutSessions([FromRoute] Guid id, [FromBody] EditSessionDTO dto)
@@ -97,6 +118,13 @@ namespace UserApi.Controllers
             return Ok($"Id de la sessions modifier : {id}");
         }
         
+        /// <summary>
+        /// Ajoute un user a une sessions
+        /// </summary>
+        /// <param name="id">id de sessions</param>
+        /// <param name="dto">Model d'ajout de sessions</param>
+        /// <response code="400 + Message"></response>
+        /// <response code="200">Confirmation + username + id session</response>
         [HttpPut]
         [Route("add/{id}")]
         public async Task<IActionResult> AddUserSessions([FromRoute] Guid id, [FromBody] AddUserDTO dto)
@@ -135,6 +163,13 @@ namespace UserApi.Controllers
             return Ok($"{user.UserName} a été ajouté a la session : {id}");
         }
 
+        /// <summary>
+        /// Remove un user a une sessions
+        /// </summary>
+        /// <param name="id">id sessions</param>
+        /// <param name="dto">model remove user</param>
+        /// <reponse code="400 + Message"></reponse>
+        /// <reponse code="200">Confirmation + username + id sessions</reponse>
         [HttpPut]
         [Route("remove/{id}")]
         public async Task<IActionResult> RemoveUserSessions([FromRoute] Guid id, [FromBody] AddUserDTO dto)
@@ -174,8 +209,12 @@ namespace UserApi.Controllers
             return Ok($"{user.UserName} a été retirer de la session : {id}");
         }
 
-        // POST: api/Sessions
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Crée une sessions
+        /// </summary>
+        /// <param name="dto">Model de création</param>
+        /// <response code="400 + Model"></response>
+        /// <response code="200">Confirmation + id sessions</response>
         [HttpPost]
         public async Task<ActionResult<Sessions>> PostSessions([FromBody] CreateSessionDTO dto)
         {
@@ -197,11 +236,18 @@ namespace UserApi.Controllers
             return Ok($"Id de la nouvelle session: {session.SessionId}");
         }
 
-        // DELETE: api/Sessions/5
+        /// <summary>
+        /// Delete une sessions
+        /// </summary>
+        /// <param name="id">sessions id</param>
+        /// <response code="400 + Message"></response>
+        /// <response code="404">Session non trouvé</response>
+        /// <response code="204">Session suprimée</response>
         [HttpDelete]
         [Route("{id}")]
         public async Task<IActionResult> DeleteSessions([FromRoute] Guid id)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             Sessions? sessions = await _context.Sessions.FindAsync(id);
             if (sessions == null) return NotFound($"Aucune sessions trouvée avec l'id suivant {id}");
 
