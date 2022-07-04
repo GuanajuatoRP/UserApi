@@ -12,6 +12,6 @@ namespace UserApi.Models.Makers
         public string? Related { get; set; }
         public string? WikiLink { get; set; }
 
-        public virtual ICollection<GetOriginalCarListDTO> Cars { get; set; }
+        public virtual ICollection<OriginalCarDTO> Cars { get; set; }
     }
 }

@@ -5,9 +5,9 @@ namespace UserApi.Mapper
 {
     public static class CarsMapper
     {
-        public static GetOriginalCarListDTO ToModel(this Car car)
+        public static OriginalCarDTO ToModel(this Car car)
         {
-            return new GetOriginalCarListDTO
+            return new OriginalCarDTO
             {
                 IdCar = car.IdCar,
                 CarId = car.CarId,

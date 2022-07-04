@@ -65,7 +65,7 @@ namespace UserApi.Controllers
 
             ApiUser userExists = await userManager.FindByNameAsync($"{dto.Prenom}{dto.Nom}");
             if (userExists != null) return BadRequest("L'utilisateur existe déjà");
-            
+
             Stage? stage = await _context.Stage.FirstOrDefaultAsync(s => s.Name == StageName.NA);
             ApiUser user = new ApiUser
             {
@@ -158,150 +158,132 @@ namespace UserApi.Controllers
             }
             else return Unauthorized();
         }
-        
-        [HttpPost]
-        [Route("TokenTest")]
-        public async Task<IActionResult> TokenTest([FromBody] string token)
-        {
-            SymmetricSecurityKey authSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Secret));
-            
-            var tokenHandler = new JwtSecurityTokenHandler();
-            try
-            {
-                tokenHandler.ValidateToken(token, new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    ValidIssuer = jwtSettings.ValidIssuer,
-                    ValidAudience = jwtSettings.ValidAudience,
-                    IssuerSigningKey = authSigningKey
-                }, out SecurityToken validatedToken);
 
 
-        /// <summary>
-        /// Teste la validiter d'un token
-        /// </summary>
-        /// <param name="token">token a check</param>
-        /// <response code="401">Token non valide || Pas la permission d'acceder a cette endpoint</response>
-        /// <response code="200">Token valide</response>
-        [HttpPost]
-        [Route("TokenTest")]
-        public async Task<IActionResult> TokenTest([FromBody] string token)
-        {
-            SymmetricSecurityKey authSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Secret));
-            
-            var tokenHandler = new JwtSecurityTokenHandler();
-            try
-            {
-                tokenHandler.ValidateToken(token, new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    ValidIssuer = jwtSettings.ValidIssuer,
-                    ValidAudience = jwtSettings.ValidAudience,
-                    IssuerSigningKey = authSigningKey
-                }, out SecurityToken validatedToken);
-            }
-            catch
-            {
-                return Unauthorized();
-            }
-            return Ok();
-        }
+         /// <summary>
+         /// Teste la validiter d'un token
+         /// </summary>
+         /// <param name="token">token a check</param>
+         /// <response code="401">Token non valide || Pas la permission d'acceder a cette endpoint</response>
+         /// <response code="200">Token valide</response>
+         [HttpPost]
+         [Route("TokenTest")]
+         public async Task<IActionResult> TokenTest([FromBody] string token)
+         {
+             SymmetricSecurityKey authSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Secret));
 
-        //[HttpPost]
-        //[Route("ConfirmDiscord")]
-        //public async Task<IActionResult> ConfirmDiscord([FromBody] ConfirmDiscordDTO dto)
-        //{
-        //    if (!ModelState.IsValid) return BadRequest(ModelState);
+             var tokenHandler = new JwtSecurityTokenHandler();
+             try
+             {
+                 tokenHandler.ValidateToken(token, new TokenValidationParameters
+                 {
+                     ValidateIssuerSigningKey = true,
+                     ValidateIssuer = false,
+                     ValidateAudience = false,
+                     ValidIssuer = jwtSettings.ValidIssuer,
+                     ValidAudience = jwtSettings.ValidAudience,
+                     IssuerSigningKey = authSigningKey
+                 }, out SecurityToken validatedToken);
+             }
+             catch
+             {
+                 return Unauthorized();
+             }
+             return Ok();
+         }
 
-        //    ApiUser user = await userManager.FindByEmailAsync(dto.DiscordId);
-        //    if (user == null) return BadRequest("Nom d'utilisateur invalide");
+         //[HttpPost]
+         //[Route("ConfirmDiscord")]
+         //public async Task<IActionResult> ConfirmDiscord([FromBody] ConfirmDiscordDTO dto)
+         //{
+         //    if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        //    if (user.EmailConfirmed) return BadRequest("Le compte discord est déjà validé");
+         //    ApiUser user = await userManager.FindByEmailAsync(dto.DiscordId);
+         //    if (user == null) return BadRequest("Nom d'utilisateur invalide");
 
-        //    IdentityResult? result = await userManager.ConfirmEmailAsync(user, dto.ConfirmationToken);
-        //    if (!result.Succeeded) return BadRequest(result.Errors);
+         //    if (user.EmailConfirmed) return BadRequest("Le compte discord est déjà validé");
 
-        //    result = await userManager.AddPasswordAsync(user, dto.Password);
-        //    if (!result.Succeeded) return BadRequest(result.Errors);
+         //    IdentityResult? result = await userManager.ConfirmEmailAsync(user, dto.ConfirmationToken);
+         //    if (!result.Succeeded) return BadRequest(result.Errors);
 
-        //    return Ok("Le compte discord a été validé avec succès");
-        //}
+         //    result = await userManager.AddPasswordAsync(user, dto.Password);
+         //    if (!result.Succeeded) return BadRequest(result.Errors);
+
+         //    return Ok("Le compte discord a été validé avec succès");
+         //}
 
 
-        /// <summary>
-        /// Check si l'utilisateur existe dans la DB
-        /// </summary>
-        /// <param name="DiscordId">discord id de l'utilisateur a check</param>
-        /// <response code="400 + Message"></response>
-        /// <response code="200">Username de l'utilisateur</response>
-        [HttpGet]
-        [Route("UserExist/{DiscordId}")]
-        public async Task<IActionResult> UserExist([FromRoute] string DiscordId)
-        {
-            ApiUser? user = await userManager.FindByEmailAsync(DiscordId);
-            if (user == null) return BadRequest("Aucun utilisateur existe avec cet id");
-            else return Ok(user.UserName);
-        }
+         /// <summary>
+         /// Check si l'utilisateur existe dans la DB
+         /// </summary>
+         /// <param name="DiscordId">discord id de l'utilisateur a check</param>
+         /// <response code="400 + Message"></response>
+         /// <response code="200">Username de l'utilisateur</response>
+         [HttpGet]
+         [Route("UserExist/{DiscordId}")]
+         public async Task<IActionResult> UserExist([FromRoute] string DiscordId)
+         {
+             ApiUser? user = await userManager.FindByEmailAsync(DiscordId);
+             if (user == null) return BadRequest("Aucun utilisateur existe avec cet id");
+             else return Ok(user.UserName);
+         }
 
-        /// <summary>
-        /// Permet de suprimer un utilisateur
-        /// </summary>
-        /// <param name="DiscordId">discord id de l'utilisateur a delete</param>
-        /// <response code="404 + Message"></response>
-        /// <response code="204">Utilisateur suprimer</response>
-        [HttpDelete]
-        [Route("DeleteUser/{DiscordId}")]
-        public async Task<IActionResult> DeleteUser([FromRoute] string DiscordId)
-        {
-            ApiUser? user = await userManager.FindByEmailAsync(DiscordId);
-            if (user != null) await userManager.DeleteAsync(user);
-            else return NotFound("Aucun user avec cet id");
+         /// <summary>
+         /// Permet de suprimer un utilisateur
+         /// </summary>
+         /// <param name="DiscordId">discord id de l'utilisateur a delete</param>
+         /// <response code="404 + Message"></response>
+         /// <response code="204">Utilisateur suprimer</response>
+         [HttpDelete]
+         [Route("DeleteUser/{DiscordId}")]
+         public async Task<IActionResult> DeleteUser([FromRoute] string DiscordId)
+         {
+             ApiUser? user = await userManager.FindByEmailAsync(DiscordId);
+             if (user != null) await userManager.DeleteAsync(user);
+             else return NotFound("Aucun user avec cet id");
 
-            return NoContent();
-        }
+             return NoContent();
+         }
 
-        /// <summary>
-        /// Crée une requette pour avoir un token de changement de mot de pase
-        /// </summary>
-        /// <param name="dto">Model de changement de mot de passe</param>
-        /// <response code="400 + Message"></response>
-        /// <response code="200">Token permettant de changer de mot de passe</response>
-        [HttpPost]
-        [Route("FrogotPassword")]
-        public async Task<IActionResult> FrogotPassword([FromBody] FrogotPasswordDTO dto)
-        {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+         /// <summary>
+         /// Crée une requette pour avoir un token de changement de mot de pase
+         /// </summary>
+         /// <param name="dto">Model de changement de mot de passe</param>
+         /// <response code="400 + Message"></response>
+         /// <response code="200">Token permettant de changer de mot de passe</response>
+         [HttpPost]
+         [Route("FrogotPassword")]
+         public async Task<IActionResult> FrogotPassword([FromBody] FrogotPasswordDTO dto)
+         {
+             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            ApiUser? user = await userManager.FindByEmailAsync(dto.DiscordId);
-            if (user == null || !(await userManager.IsEmailConfirmedAsync(user))) return BadRequest("Aucun utilisateur existe avec cet id");
+             ApiUser? user = await userManager.FindByEmailAsync(dto.DiscordId);
+             if (user == null || !(await userManager.IsEmailConfirmedAsync(user))) return BadRequest("Aucun utilisateur existe avec cet id");
 
-            string? token = await userManager.GeneratePasswordResetTokenAsync(user);
-            return Ok(token);
-        }
+             string? token = await userManager.GeneratePasswordResetTokenAsync(user);
+             return Ok(token);
+         }
 
-        /// <summary>
-        /// Reset un mot de passe avec un token de changement de mot de passe 
-        /// </summary>
-        /// <param name="dto">Model de changement de mot de passe</param>
-        /// <response code="400 + Message"></response>
-        /// <response code="200">Confirmation</response>
-        [HttpPost]
-        [Route("ResetPassword")]
-        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO dto)
-        {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+         /// <summary>
+         /// Reset un mot de passe avec un token de changement de mot de passe 
+         /// </summary>
+         /// <param name="dto">Model de changement de mot de passe</param>
+         /// <response code="400 + Message"></response>
+         /// <response code="200">Confirmation</response>
+         [HttpPost]
+         [Route("ResetPassword")]
+         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO dto)
+         {
+             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            ApiUser? user = await userManager.FindByEmailAsync(dto.DiscordId);
-            if (user == null) return BadRequest("Aucun utilisateur existe avec cet id");
+             ApiUser? user = await userManager.FindByEmailAsync(dto.DiscordId);
+             if (user == null) return BadRequest("Aucun utilisateur existe avec cet id");
 
-            IdentityResult? result = await userManager.ResetPasswordAsync(user, dto.Token, dto.Password);
-            if (!result.Succeeded) return BadRequest(result.Errors);
+             IdentityResult? result = await userManager.ResetPasswordAsync(user, dto.Token, dto.Password);
+             if (!result.Succeeded) return BadRequest(result.Errors);
 
-            return Ok("Le mot de passe a été modifié avec succès");
-        }
-    }
+             return Ok("Le mot de passe a été modifié avec succès");
+         }
+     }
+
 }

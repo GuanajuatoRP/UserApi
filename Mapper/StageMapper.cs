@@ -14,6 +14,14 @@ namespace UserApi.Mapper
                 Users = stage.Users?.Select(u => u.ToModel()).ToList(),
             };
         }
+        public static StageDTO ToModelWithoutUser(this Stage stage)
+        {
+            return new StageDTO
+            {
+                StageId = stage.StageId,
+                Name = stage.Name.ToString(),
+            };
+        }
         public static ListStagesDTO ToModelList(this Stage stage)
         {
             return new ListStagesDTO

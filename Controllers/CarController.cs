@@ -33,7 +33,7 @@ namespace UserApi.Controllers
         /// </summary>
         /// <returns>Liste des voitures</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GetOriginalCarListDTO>>> GetOriginalCars()
+        public async Task<ActionResult<IEnumerable<OriginalCarDTO>>> GetOriginalCars()
         {
             List<Car>? cars = await _carContext.Cars
                 .Include(c => c.Maker)
@@ -51,7 +51,7 @@ namespace UserApi.Controllers
         /// <returns>Liste des voittures</returns>
         [HttpPost]
         [Route("CarsIds")]
-        public async Task<ActionResult<IEnumerable<GetOriginalCarListDTO>>> GetOriginalCarsIds([FromBody] List<Guid> guids)
+        public async Task<ActionResult<IEnumerable<OriginalCarDTO>>> GetOriginalCarsIds([FromBody] List<Guid> guids)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
@@ -71,7 +71,7 @@ namespace UserApi.Controllers
         /// <returns>Model de la voiture</returns>
         [HttpGet]
         [Route("{id}")]
-        public async Task<ActionResult<GetOriginalCarListDTO>> GetOriginalCar(Guid id)
+        public async Task<ActionResult<OriginalCarDTO>> GetOriginalCar(Guid id)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             Car? car = await _carContext.Cars

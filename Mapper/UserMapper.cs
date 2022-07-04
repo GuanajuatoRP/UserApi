@@ -27,7 +27,7 @@ namespace UserApi.Mapper
                 CreatedAt = user.CreatedAt.ToString(),
                 Argent = user.Argent,
                 Permis = user.Permis.ToString(),
-                Stage = user.Stage.ToModel(),
+                Stage = user.Stage.ToModelWithoutUser(),
                 Points = user.Points,
                 NbSessionsPermis = user.NbSessionsPermis,
                 NbSessionsPolice = user.NbSessionsPolice,

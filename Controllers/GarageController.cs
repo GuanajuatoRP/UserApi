@@ -7,7 +7,6 @@ using UserApi.Data.Enum;
 using UserApi.Mapper;
 using UserApi.Models.Car;
 using UserApi.Models.Garage;
-using UserApi.Settings;
 
 namespace UserApi.Controllers
 {
@@ -19,11 +18,13 @@ namespace UserApi.Controllers
     public class GarageController : ControllerBase
     {
         private readonly UserApiContext _userContext;
+        private readonly CarApiContext _carContext;
         private readonly UserManager<ApiUser> userManager;
 
-        public GarageController(UserApiContext userContext, UserManager<ApiUser> userManager)
+        public GarageController(UserApiContext userContext, CarApiContext carContext, UserManager<ApiUser> userManager)
         {
             _userContext = userContext;
+            _carContext = carContext;
             this.userManager = userManager;
         }
 
@@ -128,84 +129,13 @@ namespace UserApi.Controllers
             Voitures? car = await _userContext.Voitures
                 .Include(c => c.User)
                 .FirstOrDefaultAsync(c => c.KeyCar == KeyCar);
-            
-            if (car == null) return BadRequest("Aucune voiture existe avec cet Id");
-            
-            string queryString = @$"SELECT * FROM Car WHERE Id_Car = '{car.IdCar}'";
-            string connectionString = @"server=172.17.0.2,1433;database=Cars;User Id=sa;Password=*5273%0&Q9%8q!3@#^1#";
 
-            CarDTO? originalCar = null;
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                SqlCommand command = new SqlCommand(queryString, connection);
-                connection.Open();
-                SqlDataReader reader = command.ExecuteReader();
-                try
-                {
-                    while (reader.Read())
-                    {
-                        originalCar = new CarDTO
-                        {
-                            IdCar = Guid.Parse(reader["Id_Car"].ToString()),
-                            CarId = Convert.ToInt32(reader["CarId"]),
-                            CarOrdinal = Convert.ToInt32(reader["CarOrdinal"]),
-                            Maker = reader["Maker_Id"].ToString(),
-                            Model = reader["Model"].ToString(),
-                            Year = Convert.ToInt32(reader["Year"]),
-                            Transmission = Convert.ToInt32(reader["Transmission"]),
-                            EngineConfiguration = reader["EngineConfiguration"].ToString(),
-                            Type = (CarType)Enum.Parse(typeof(CarType), reader["Type"].ToString()),
-                            Rarity = reader["Rarity"].ToString(),
-                            WikiLink = reader["WikiLink"].ToString(),
-                            PictureLink = reader["PictureLink"].ToString(),
-                            
-                            Original_PowerBhp = Convert.ToInt32(reader["Power_BHP"]),
-                            Original_PowerKw = Convert.ToInt32(reader["Power_KW"]),
-                            Original_TorqueLbft = Convert.ToInt32(reader["Torque_LBFT"]),
-                            Original_TorqueNm = Convert.ToInt32(reader["Torque_NM"]),
-                            Original_WeightLbs = Convert.ToInt32(reader["Weight_LBS"]),
-                            Original_WeightKg = Convert.ToInt32(reader["Weight_KG"]),
-                            Original_EngineDisplacement = Convert.ToDecimal(reader["EngineDisplacement"]),
-                            Original_NbCylindre = Convert.ToInt32(reader["NbCylindre"]),
-                            Original_EnginePosition = reader["EnginePosition"].ToString(),
-                            Original_Aspiration = reader["Aspiration"].ToString(),
-                            Original_Speed = Convert.ToDecimal(reader["Speed"]),
-                            Original_Handling = Convert.ToDecimal(reader["Handling"]),
-                            Original_Accelerate = Convert.ToDecimal(reader["Accelerate"]),
-                            Original_Launch = Convert.ToDecimal(reader["Launch"]),
-                            Original_Braking = Convert.ToDecimal(reader["Braking"]),
-                            Original_Offroad = Convert.ToDecimal(reader["Offroad"]),
-                            Original_Pi = Convert.ToInt32(reader["PI"]),
-                            OriginalPrice = Convert.ToInt32(reader["Price"]),
-                            Original_Class = reader["Class"].ToString(),
-                        };
-                    }
-                }
-                finally
-                {
-                    reader.Close();
-                }
+            Car? originalCar = await _carContext.Cars
+                                            .Include(c => c.Maker)
+                                            .FirstOrDefaultAsync(c => c.IdCar == car.IdCar);
 
 
-                queryString = @$"SELECT * FROM Maker WHERE Id_Maker = '{originalCar.Maker}'";
-                command = new SqlCommand(queryString, connection);
-                reader = command.ExecuteReader();
-                try
-                {
-                    while (reader.Read())
-                    {
-                        originalCar.Maker = reader["Name"].ToString();
-                    }
-                }
-                finally
-                {
-                    reader.Close();
-                }
-            }
-
-            if (originalCar == null) return BadRequest("Une erreur c'est produite");
-
-            return car.ToModel(originalCar);
+            return car.ToModel(originalCar.ToModel());
         }
 
         /// <summary>
@@ -232,7 +162,7 @@ namespace UserApi.Controllers
                 if (dto == null) return BadRequest("Une erreur c'est produite");
                 carDto.Add(dto.Value);
             }
-            
+
 
             return carDto;
 
