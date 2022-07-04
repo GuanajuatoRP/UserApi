@@ -9,6 +9,9 @@ using UserApi.Settings;
 
 namespace UserApi.Controllers
 {
+    /// <summary>
+    /// Gère les permis et les stages des utilisateur
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class PermisController : ControllerBase
@@ -22,6 +25,12 @@ namespace UserApi.Controllers
             this.userManager = userManager;
         }
 
+        /// <summary>
+        /// Get les permis d'un user
+        /// </summary>
+        /// <param name="DiscordId">Discord Id de l'utilisateur</param>
+        /// <response code="400 + Message"></response>
+        /// <returns>Model permis</returns>
         [HttpGet]
         [Route("{DiscordId}")]
         public async Task<ActionResult<PermisDTO>> GetPermis([FromRoute] string DiscordId)
@@ -35,6 +44,13 @@ namespace UserApi.Controllers
             return user.ToPermisDto();
         }
 
+        /// <summary>
+        /// Ajoute des points au permis d'un user
+        /// </summary>
+        /// <param name="DiscordId">discord id user</param>
+        /// <param name="dto">Model changement de points</param>
+        /// <response code="400 + Message"></response>
+        /// <response code="200">Model Permis</response>
         [HttpPost]
         [Route("addPoints/{DiscordId}")]
         public async Task<IActionResult> AddPoints([FromRoute] string DiscordId, [FromBody] ChangePointsDTO dto)
@@ -53,6 +69,13 @@ namespace UserApi.Controllers
             else return BadRequest(result.Errors);
         }
 
+        /// <summary>
+        /// Retire des points a un user
+        /// </summary>
+        /// <param name="DiscordId">discord is user</param>
+        /// <param name="dto">Model changement points</param>
+        /// <response code="400 + Message"></response>
+        /// <response code="200">Model permis user</response>
         [HttpPost]
         [Route("removePoints/{DiscordId}")]
         public async Task<IActionResult> RemovePoints([FromRoute] string DiscordId, [FromBody] ChangePointsDTO dto)
@@ -78,6 +101,13 @@ namespace UserApi.Controllers
             else return BadRequest(result.Errors);
         }
 
+        /// <summary>
+        /// Défini un nombre de point a un user
+        /// </summary>
+        /// <param name="DiscordId">discord is user</param>
+        /// <param name="dto">Model changement points</param>
+        /// <response code="400 + Message"></response>
+        /// <response code="200">Model permis user</response>
         [HttpPut]
         [Route("setPoints/{DiscordId}")]
         public async Task<IActionResult> SetPoints([FromRoute] string DiscordId, [FromBody] ChangePointsDTO dto)
@@ -96,6 +126,13 @@ namespace UserApi.Controllers
             else return BadRequest(result.Errors);
         }
 
+        /// <summary>
+        /// Défini un permis
+        /// </summary>
+        /// <param name="DiscordId">discord is user</param>
+        /// <param name="dto">Model changement permis</param>
+        /// <response code="400 + Message"></response>
+        /// <response code="200">Model permis user</response>
         [HttpPut]
         [Route("setPermis/{DiscordId}")]
         public async Task<IActionResult> SetPermis([FromRoute] string DiscordId, [FromBody] SetPermisDTO dto)
@@ -116,6 +153,12 @@ namespace UserApi.Controllers
             else return BadRequest(result.Errors);
         }
 
+        /// <summary>
+        /// Upgrade de permis
+        /// </summary>
+        /// <param name="DiscordId">discord is user</param>
+        /// <response code="400 + Message"></response>
+        /// <response code="200">Model permis user</response>
         [HttpGet]
         [Route("upgradePermis/{DiscordId}")]
         public async Task<IActionResult> UpgradePermis([FromRoute] string DiscordId)
@@ -149,6 +192,13 @@ namespace UserApi.Controllers
             else return BadRequest(result.Errors);
         }
 
+        /// <summary>
+        /// retire un permis
+        /// </summary>
+        /// <param name="DiscordId">discord is user</param>
+        /// <param name="dto">Model retait de permis</param>
+        /// <response code="400 + Message"></response>
+        /// <response code="200">Model permis user</response>
         [HttpPost]
         [Route("retraitPermis/{DiscordId}")]
         public async Task<IActionResult> RemovePermis([FromRoute] string DiscordId, [FromBody] RetraitPermisDTO dto)
@@ -169,6 +219,12 @@ namespace UserApi.Controllers
             else return BadRequest(result.Errors);
         }
 
+        /// <summary>
+        /// Upgrade de stage
+        /// </summary>
+        /// <param name="DiscordId">discord is user</param>
+        /// <response code="400 + Message"></response>
+        /// <response code="200">Model permis user</response>
         [HttpGet]
         [Route("upgradeStage/{DiscordId}")]
         public async Task<IActionResult> UpgradeStage([FromRoute] string DiscordId)
@@ -200,6 +256,12 @@ namespace UserApi.Controllers
             else return BadRequest(result.Errors);
         }
 
+        /// <summary>
+        /// retait de stage
+        /// </summary>
+        /// <param name="DiscordId">discord is user</param>
+        /// <response code="400 + Message"></response>
+        /// <response code="200">Model permis user</response>
         [HttpGet]
         [Route("retraitStage/{DiscordId}")]
         public async Task<IActionResult> RemoveStage([FromRoute] string DiscordId)

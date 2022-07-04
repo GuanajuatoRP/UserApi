@@ -14,6 +14,10 @@ using UserApi.Settings;
 
 namespace UserApi.Controllers
 {
+    /// <summary>
+    /// Contrôlleur d'Auth et de gestion des utilisateurs
+    /// </summary>
+    [Authorize]
     [Route("")]
     [ApiController]
     public class AuthController : ControllerBase
@@ -30,6 +34,11 @@ namespace UserApi.Controllers
             this.roleManager = roleManager;
             this.jwtSettings = jwtSettings;
         }
+
+        /// <summary>
+        /// Initialise les table avec les rôles et l'utilisateur Admin
+        /// </summary>
+        /// <response code="200 + Message"></response>
         [HttpPost]
         [Route("Initialize")]
         public async Task<IActionResult> Initialize()
@@ -40,6 +49,12 @@ namespace UserApi.Controllers
             return Ok(resultMessage);
         }
 
+        /// <summary>
+        /// Permet de register un user dans la DB
+        /// </summary>
+        /// <param name="dto">Model de l'utilisateur</param>
+        /// <response code="400 + Message"></response>
+        /// <response code="200 + Message"></response>
         [AllowAnonymous]
         [HttpPost]
         [Route("register")]
@@ -80,7 +95,15 @@ namespace UserApi.Controllers
             //string? registrationToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
             //return Ok(registrationToken);
         }
-        
+
+
+        /// <summary>
+        /// Permet de login un user dans la DB
+        /// </summary>
+        /// <param name="dto">Model de login d'un user</param>
+        /// <response code="400 + Message"></response>
+        /// <response code="401">Erreur de mdp ou id</response>
+        /// <response code="200">Token + date d'expiration</response>
         [AllowAnonymous]
         [HttpPost]
         [Route("Login")]
@@ -135,7 +158,14 @@ namespace UserApi.Controllers
             }
             else return Unauthorized();
         }
-        [Authorize]
+
+
+        /// <summary>
+        /// Teste la validiter d'un token
+        /// </summary>
+        /// <param name="token">token a check</param>
+        /// <response code="401">Token non valide || Pas la permission d'acceder a cette endpoint</response>
+        /// <response code="200">Token valide</response>
         [HttpPost]
         [Route("TokenTest")]
         public async Task<IActionResult> TokenTest([FromBody] string token)
@@ -182,6 +212,13 @@ namespace UserApi.Controllers
         //    return Ok("Le compte discord a été validé avec succès");
         //}
 
+
+        /// <summary>
+        /// Check si l'utilisateur existe dans la DB
+        /// </summary>
+        /// <param name="DiscordId">discord id de l'utilisateur a check</param>
+        /// <response code="400 + Message"></response>
+        /// <response code="200">Username de l'utilisateur</response>
         [HttpGet]
         [Route("UserExist/{DiscordId}")]
         public async Task<IActionResult> UserExist([FromRoute] string DiscordId)
@@ -191,6 +228,12 @@ namespace UserApi.Controllers
             else return Ok(user.UserName);
         }
 
+        /// <summary>
+        /// Permet de suprimer un utilisateur
+        /// </summary>
+        /// <param name="DiscordId">discord id de l'utilisateur a delete</param>
+        /// <response code="404 + Message"></response>
+        /// <response code="204">Utilisateur suprimer</response>
         [HttpDelete]
         [Route("DeleteUser/{DiscordId}")]
         public async Task<IActionResult> DeleteUser([FromRoute] string DiscordId)
@@ -202,6 +245,12 @@ namespace UserApi.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Crée une requette pour avoir un token de changement de mot de pase
+        /// </summary>
+        /// <param name="dto">Model de changement de mot de passe</param>
+        /// <response code="400 + Message"></response>
+        /// <response code="200">Token permettant de changer de mot de passe</response>
         [HttpPost]
         [Route("FrogotPassword")]
         public async Task<IActionResult> FrogotPassword([FromBody] FrogotPasswordDTO dto)
@@ -215,6 +264,12 @@ namespace UserApi.Controllers
             return Ok(token);
         }
 
+        /// <summary>
+        /// Reset un mot de passe avec un token de changement de mot de passe 
+        /// </summary>
+        /// <param name="dto">Model de changement de mot de passe</param>
+        /// <response code="400 + Message"></response>
+        /// <response code="200">Confirmation</response>
         [HttpPost]
         [Route("ResetPassword")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO dto)

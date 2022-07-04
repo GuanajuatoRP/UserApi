@@ -5,6 +5,9 @@ using UserApi.Models.Web;
 
 namespace UserApi.Controllers
 {
+    /// <summary>
+    /// Appels générique au site web
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class WebController : ControllerBase
@@ -16,10 +19,13 @@ namespace UserApi.Controllers
             _context = context;
         }
 
+        /// <summary>
+        /// Get les images pour la carousel Home Page
+        /// </summary>
+        /// <returns>Liste d'images</returns>
         [HttpGet]
         [Route("CarouselImages")]
         public async Task<ActionResult<List<CarouselDTO>>> GetCarouselImages()
-        //public async Task<ActionResult<List<CarouselDTO>>> GetCarouselImages()
         {
             List<CarouselDTO> srcList = new List<CarouselDTO>
             {

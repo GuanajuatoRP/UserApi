@@ -9,9 +9,11 @@ using UserApi.Data;
 using UserApi.Mapper;
 using UserApi.Models.Stages;
 
-//CRUD FOR STAGE TABLE
 namespace UserApi.Controllers
 {
+    /// <summary>
+    /// Gère les stage du jeu
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class StagesController : ControllerBase
@@ -23,7 +25,10 @@ namespace UserApi.Controllers
             _context = context;
         }
 
-        // GET: api/Stages
+        /// <summary>
+        /// Get la liste des stages
+        /// </summary>
+        /// <returns>Liste model satges</returns>
         [HttpGet]
         public async Task<ActionResult<List<ListStagesDTO>>> GetStage()
         {
@@ -32,11 +37,17 @@ namespace UserApi.Controllers
             return stages.Select(s => s.ToModelList()).ToList();
         }
 
-        // GET: api/Stages/5
+        /// <summary>
+        /// Get un stage par son id
+        /// </summary>
+        /// <param name="id">id du stage</param>
+        /// <param name="withUser">inclu les utilisateur du stage</param>
+        /// <response code="400 + Message"></response>
+        /// <returns>Model stage</returns>
         [HttpGet("{id}")]
-
         public async Task<ActionResult<StageDTO>> GetStage([FromRoute] Guid id, bool withUser = false)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             Stage? stage = null;
             if (withUser) stage = await _context.Stage
                     .Include(s => s.Users)
@@ -49,11 +60,18 @@ namespace UserApi.Controllers
             return stage.ToModel();
         }
 
-        // PUT: api/Stages/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Edit un stage
+        /// </summary>
+        /// <param name="id">stage id</param>
+        /// <param name="dto">Model de modif</param>
+        /// <response code="400 + Message"></response>
+        /// <response code="404">Stage non trouvé</response>
+        /// <response code="200">Confirmation + id</response>
         [HttpPut("{id}")]
         public async Task<IActionResult> PutStage([FromRoute] Guid id, [FromBody] EditStageDTO dto)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             if (id != dto.StageId) return BadRequest("L'id est != de celui du dto");
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
@@ -89,8 +107,12 @@ namespace UserApi.Controllers
             return Ok($"Id du stage modifier : {id}");
         }
 
-        // POST: api/Stages
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Crée un nouveau stage
+        /// </summary>
+        /// <param name="dto">Model stage</param>
+        /// <response code="400 + Model"></response>
+        /// <response code="200">confirmation + id stage</response>
         [HttpPost]
         public async Task<IActionResult> PostStage([FromBody] CreateStageDTO dto)
         {
@@ -118,10 +140,17 @@ namespace UserApi.Controllers
             return Ok($"Id du nouveau stage : {stage.StageId}");
         }
 
-        // DELETE: api/Stages/5
+        /// <summary>
+        /// Delete stage
+        /// </summary>
+        /// <param name="id">id stage</param>
+        /// <response code="400 + Message"></response>
+        /// <response code="404">stage non trouvé</response>
+        /// <response code="204">stage suprimé</response>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteStage([FromRoute] Guid id)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             Stage? stage = await _context.Stage.FindAsync(id);
 
             if (stage == null) return NotFound($"Aucun stage trouvé avec l'id suivant {id}");

@@ -12,9 +12,9 @@ using UserApi.Settings;
 namespace UserApi.Controllers
 {
     /// <summary>
-    /// Permet de contrôller tou
+    /// Permet de contrôller les voiture Original
     /// </summary>
-    [Route("api/Garage")]
+    [Route("api/Car")]
     [ApiController]
     public class CarController : ControllerBase
     {
@@ -27,8 +27,11 @@ namespace UserApi.Controllers
             this.userManager = userManager;
         }
 
+        /// <summary>
+        /// Get toute les voiture d'origine
+        /// </summary>
+        /// <returns>Liste des voitures</returns>
         [HttpGet]
-        [Route("Original")]
         public async Task<ActionResult<IEnumerable<GetOriginalCarListDTO>>> GetOriginalCars()
         {
             List<Car>? cars = await _carContext.Cars
@@ -39,11 +42,18 @@ namespace UserApi.Controllers
             return cars.Select(c => c.ToModel()).ToList();
         }
 
-        // GET: api/Cars
+        /// <summary>
+        /// Obtenir une liste de voiture en fonction de leurs ids
+        /// </summary>
+        /// <param name="guids">Liste des ids</param>
+        /// <response code="400 + Message"></response>
+        /// <returns>Liste des voittures</returns>
         [HttpPost]
-        [Route("Original/CarsIds")]
+        [Route("CarsIds")]
         public async Task<ActionResult<IEnumerable<GetOriginalCarListDTO>>> GetOriginalCarsIds([FromBody] List<Guid> guids)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
             List<Car>? cars = await _carContext.Cars
                 .Include(c => c.Maker)
                 .Where(c => guids.Contains(c.IdCar))
@@ -52,11 +62,17 @@ namespace UserApi.Controllers
             return cars.Select(c => c.ToModel()).ToList();
         }
 
-        // GET: api/Cars/5
+        /// <summary>
+        /// Get une voiture par son ID
+        /// </summary>
+        /// <param name="id">id de la voiture </param>
+        /// <response code="400 + Message"></response>
+        /// <returns>Model de la voiture</returns>
         [HttpGet]
-        [Route("Original/{id}")]
+        [Route("{id}")]
         public async Task<ActionResult<GetOriginalCarListDTO>> GetOriginalCar(Guid id)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             Car? car = await _carContext.Cars
                 .Include(c => c.Maker)
                 .FirstOrDefaultAsync(c => c.IdCar == id);
