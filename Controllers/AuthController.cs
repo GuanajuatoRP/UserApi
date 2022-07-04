@@ -14,6 +14,7 @@ using UserApi.Settings;
 
 namespace UserApi.Controllers
 {
+    [Authorize]
     [Route("")]
     [ApiController]
     public class AuthController : ControllerBase
@@ -30,6 +31,7 @@ namespace UserApi.Controllers
             this.roleManager = roleManager;
             this.jwtSettings = jwtSettings;
         }
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [Route("Initialize")]
         public async Task<IActionResult> Initialize()
@@ -107,13 +109,17 @@ namespace UserApi.Controllers
 
                 SymmetricSecurityKey? authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret));
 
-                JwtSecurityToken token = new JwtSecurityToken(
-                    //issuer: JWTSettings.ValidIssuer,
-                    //audience: JWTSettings.ValidAudience,
-                    expires: DateTime.Now.AddMinutes(jwtSettings.DurationTime),
-                    claims: authClaims,
-                    signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
-                );
+                JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+                SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
+                {
+                    Subject = new ClaimsIdentity(authClaims),
+                    Expires = DateTime.UtcNow.AddHours(jwtSettings.DurationTime),
+                    Issuer = jwtSettings.ValidIssuer,
+                    Audience = jwtSettings.ValidAudience,
+                    SigningCredentials = new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256Signature)
+                };
+
+                SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
 
                 return Ok(new
                 {
@@ -122,6 +128,34 @@ namespace UserApi.Controllers
                 });
             }
             else return Unauthorized();
+        }
+        
+        [HttpPost]
+        [Route("TokenTest")]
+        public async Task<IActionResult> TokenTest([FromBody] string token)
+        {
+            SymmetricSecurityKey authSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Secret));
+            
+            var tokenHandler = new JwtSecurityTokenHandler();
+            try
+            {
+                tokenHandler.ValidateToken(token, new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidIssuer = jwtSettings.ValidIssuer,
+                    ValidAudience = jwtSettings.ValidAudience,
+                    IssuerSigningKey = authSigningKey
+                }, out SecurityToken validatedToken);
+
+
+            }
+            catch
+            {
+                return Unauthorized();
+            }
+            return Ok();
         }
 
         //[HttpPost]
@@ -153,6 +187,7 @@ namespace UserApi.Controllers
             else return Ok(user.UserName);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete]
         [Route("DeleteUser/{DiscordId}")]
         public async Task<IActionResult> DeleteUser([FromRoute] string DiscordId)
@@ -177,6 +212,7 @@ namespace UserApi.Controllers
             return Ok(token);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [Route("ResetPassword")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO dto)

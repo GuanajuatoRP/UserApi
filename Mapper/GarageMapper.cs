@@ -1,11 +1,12 @@
 ﻿using UserApi.Data;
+using UserApi.Models.Car;
 using UserApi.Models.Garage;
 
 namespace UserApi.Mapper
 {
     public static class GarageMapper
     {
-        public static CarDTO ToModel(this Voitures car, CarDTO originalCar)
+        public static CarDTO ToModel(this Voitures car, OriginalCarDTO originalCar)
         {
             return new CarDTO
             {
@@ -19,31 +20,32 @@ namespace UserApi.Mapper
                 Model = originalCar.Model,
                 Year = originalCar.Year,
                 Transmission = originalCar.Transmission,
+                GearBox = originalCar.GearBox,
                 Type = originalCar.Type,
                 Rarity = originalCar.Rarity,
                 WikiLink = originalCar.WikiLink,
                 PictureLink = originalCar.PictureLink,
                 EngineConfiguration = originalCar.EngineConfiguration,
 
-                OriginalPrice = originalCar.OriginalPrice,
-                Original_Accelerate = originalCar.Original_Accelerate,
-                Original_Aspiration = originalCar.Original_Aspiration,
-                Original_Braking = originalCar.Original_Braking,
-                Original_Class = originalCar.Original_Class,
-                Original_EngineDisplacement = originalCar.Original_EngineDisplacement,
-                Original_EnginePosition = originalCar.Original_EnginePosition,
-                Original_Handling = originalCar.Original_Handling,
-                Original_Launch = originalCar.Original_Launch,
-                Original_NbCylindre = originalCar.Original_NbCylindre,
-                Original_Offroad = originalCar.Original_Offroad,
-                Original_Pi = originalCar.Original_Pi,
-                Original_PowerBhp = originalCar.Original_PowerBhp,
-                Original_PowerKw = originalCar.Original_PowerKw,
-                Original_Speed = originalCar.Original_Speed,
-                Original_TorqueLbft = originalCar.Original_TorqueLbft,
-                Original_TorqueNm = originalCar.Original_TorqueNm,
-                Original_WeightKg = originalCar.Original_WeightKg,
-                Original_WeightLbs = originalCar.Original_WeightLbs,
+                OriginalPrice = originalCar.Price,
+                Original_Accelerate = originalCar.Accelerate,
+                Original_Aspiration = originalCar.Aspiration,
+                Original_Braking = originalCar.Braking,
+                Original_Class = originalCar.Class,
+                Original_EngineDisplacement = originalCar.EngineDisplacement,
+                Original_EnginePosition = originalCar.EnginePosition,
+                Original_Handling = originalCar.Handling,
+                Original_Launch = originalCar.Launch,
+                Original_NbCylindre = originalCar.NbCylindre,
+                Original_Offroad = originalCar.Offroad,
+                Original_Pi = originalCar.Pi,
+                Original_PowerBhp = originalCar.PowerBhp,
+                Original_PowerKw = originalCar.PowerKw,
+                Original_Speed = originalCar.Speed,
+                Original_TorqueLbft = originalCar.TorqueLbft,
+                Original_TorqueNm = originalCar.TorqueNm,
+                Original_WeightKg = originalCar.WeightKg,
+                Original_WeightLbs = originalCar.WeightLbs,
 
                 PowerBhp = car.Power_BHP,
                 PowerKw = car.Power_KW,

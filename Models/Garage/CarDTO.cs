@@ -14,8 +14,9 @@ namespace UserApi.Models.Garage
         public string Maker { get; set; }
         public string Model { get; set; }
         public int Year { get; set; }
-        public int Transmission { get; set; }
-        public CarType Type { get; set; }
+        public string Transmission { get; set; }
+        public int GearBox { get; set; }
+        public string Type { get; set; }
         public string Rarity { get; set; }
         public string WikiLink { get; set; }
         public string? PictureLink { get; set; }

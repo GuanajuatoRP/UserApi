@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +22,7 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddSingleton(builder.Configuration.GetSection("JWTSettings").Get<JWTSettings>());
     builder.Services.AddControllers();
 
-    AddCORS(builder); //Permet de définir les CallsOrigins 
+    AddCORS(builder); //Permet de dï¿½finir les CallsOrigins 
     AddDatabase(builder);
     AddJWT(builder);
     AddServices(builder);
@@ -37,7 +38,7 @@ var builder = WebApplication.CreateBuilder(args);
         {
             Version = "v1",
             Title = API_NAME,
-            Description = "API for Guanajuato RôlePlay"
+            Description = "API for Guanajuato Rï¿½lePlay"
         });
         c.IncludeXmlComments(xmlPath);
         c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -82,11 +83,11 @@ if (app.Environment.IsDevelopment())
 
 ConfigureExceptionHandler(app);
 
-app.MapControllers();
 app.UseAuthentication();
-app.UseAuthorization();
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseRouting();
+app.UseAuthorization();
+app.MapControllers();
 app.UseCors();
 app.Run();
 
@@ -132,8 +133,17 @@ void AddJWT(WebApplicationBuilder builder)
             ValidateLifetime = true,
             RoleClaimType = "Roles",
             NameClaimType = "Name",
+
         };
     });
+    builder.Services.AddAuthorization(options => 
+    {
+        options.DefaultPolicy = new AuthorizationPolicyBuilder()
+            .RequireAuthenticatedUser()
+            .AddAuthenticationSchemes("Bearer")
+            .Build();
+    });
+
 
 }
 
@@ -161,7 +171,7 @@ void AddItentity(WebApplicationBuilder builder)
         options.Password.RequireUppercase = true;
         options.Password.RequireNonAlphanumeric = true;
         options.Password.RequiredLength = 10;
-        options.Password.RequiredUniqueChars = 4; //Determine le nombre de caractère unnique minimum requis
+        options.Password.RequiredUniqueChars = 4; //Determine le nombre de caractï¿½re unnique minimum requis
 
 
         //Lockout si mdp fail 5 fois alors compte bloquer 10 min
