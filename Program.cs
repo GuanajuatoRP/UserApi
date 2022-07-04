@@ -106,6 +106,7 @@ void AddCORS(WebApplicationBuilder builder)
 void AddDatabase(WebApplicationBuilder builder)
 {
     builder.Services.AddDbContext<UserApiContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("UserSQL")));
+    builder.Services.AddDbContext<CarApiContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("CarSQL")));
 }
 
 void AddJWT(WebApplicationBuilder builder)
