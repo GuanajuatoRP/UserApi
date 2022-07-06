@@ -24,7 +24,7 @@ namespace UserApi.Mapper
                 Username = user.UserName,
                 DiscordId = user.Email,
                 Sexe = user.Sexe,
-                CreatedAt = user.CreatedAt.ToString(),
+                CreatedAt = user.CreatedAt.ToString("dd/MM/yyyy"),
                 Argent = user.Argent,
                 Permis = user.Permis.ToString(),
                 Stage = user.Stage.ToModelWithoutUser(),

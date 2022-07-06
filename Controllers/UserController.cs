@@ -37,8 +37,8 @@ namespace UserApi.Controllers
         /// <param name="DiscordId">discord is user</param>
         /// <returns></returns>
         [HttpGet]
-        [Route("/{DiscordId}")]
-        public async Task<ActionResult<UserDTO>> GetUser([FromRoute] string DiscordId)
+        [Route("{DiscordId}")]
+        public async Task<ActionResult<UserDTO>> GetUer([FromRoute] string DiscordId)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
