@@ -399,10 +399,10 @@ namespace UserApi.Migrations
                     b.Property<int>("Pi")
                         .HasColumnType("int");
 
-                    b.Property<int>("Power_BHP")
+                    b.Property<int>("PowerBHP")
                         .HasColumnType("int");
 
-                    b.Property<int>("Power_KW")
+                    b.Property<int>("PowerKW")
                         .HasColumnType("int");
 
                     b.Property<int>("PrixModif")
@@ -414,16 +414,16 @@ namespace UserApi.Migrations
                     b.Property<decimal>("Speed")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("Torque_LBFT")
+                    b.Property<int>("TorqueLBFT")
                         .HasColumnType("int");
 
-                    b.Property<int>("Torque_NM")
+                    b.Property<int>("TorqueNM")
                         .HasColumnType("int");
 
-                    b.Property<int>("Weight_KG")
+                    b.Property<int>("WeightKG")
                         .HasColumnType("int");
 
-                    b.Property<int>("Weight_LBS")
+                    b.Property<int>("WeightLBS")
                         .HasColumnType("int");
 
                     b.HasKey("KeyCar");

@@ -12,8 +12,8 @@ using UserApi.Data;
 namespace UserApi.Migrations
 {
     [DbContext(typeof(UserApiContext))]
-    [Migration("20220602211711_Initial")]
-    partial class Initial
+    [Migration("20220711202549_RemoveUnderscore")]
+    partial class RemoveUnderscore
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -197,7 +197,7 @@ namespace UserApi.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("IdStage")
+                    b.Property<Guid?>("IdStage")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("LockoutEnabled")
@@ -230,9 +230,8 @@ namespace UserApi.Migrations
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Permis")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Permis")
+                        .HasColumnType("int");
 
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
@@ -251,7 +250,6 @@ namespace UserApi.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Sexe")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("TwoFactorEnabled")
@@ -276,20 +274,55 @@ namespace UserApi.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("UserApi.Data.Markdown", b =>
+                {
+                    b.Property<Guid>("TextId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CatName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FormatType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RawText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("TextId");
+
+                    b.ToTable("Markdown");
+                });
+
             modelBuilder.Entity("UserApi.Data.Sessions", b =>
                 {
                     b.Property<Guid>("SessionId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("Debut")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("Debut")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("Fin")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("Fin")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("NbParticipant")
                         .HasColumnType("int");
+
+                    b.Property<int>("SessionNumber")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SessionNumber"), 1L, 1);
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
@@ -346,6 +379,9 @@ namespace UserApi.Migrations
                     b.Property<int>("EnginePosition")
                         .HasColumnType("int");
 
+                    b.Property<int>("GearBox")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("Handling")
                         .HasColumnType("decimal(18,2)");
 
@@ -392,6 +428,10 @@ namespace UserApi.Migrations
 
                     b.Property<int>("TorqueNM")
                         .HasColumnType("int");
+
+                    b.Property<string>("Transmission")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("WeightKG")
                         .HasColumnType("int");
@@ -477,8 +517,7 @@ namespace UserApi.Migrations
                     b.HasOne("UserApi.Data.Stage", "Stage")
                         .WithMany("Users")
                         .HasForeignKey("IdStage")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Stage");
                 });

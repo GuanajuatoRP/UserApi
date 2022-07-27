@@ -37,6 +37,7 @@ namespace UserApi.Data
                 Sexe = "Home",
                 CreatedAt = DateTime.Now,
                 Argent = 0,
+                Stage = new (),
                 Permis = PermisName.NA,
                 Points = 0,
                 NbSessions = 0,

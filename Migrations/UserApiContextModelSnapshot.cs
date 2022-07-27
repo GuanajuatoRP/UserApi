@@ -272,6 +272,46 @@ namespace UserApi.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("UserApi.Data.Maker", b =>
+                {
+                    b.Property<Guid>("IdMaker")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id_Maker")
+                        .HasDefaultValueSql("(newid())");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("Founded")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Origin")
+                        .HasMaxLength(255)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Related")
+                        .HasMaxLength(255)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("WikiLink")
+                        .HasMaxLength(255)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("IdMaker");
+
+                    b.ToTable("Maker", (string)null);
+                });
+
             modelBuilder.Entity("UserApi.Data.Markdown", b =>
                 {
                     b.Property<Guid>("TextId")
@@ -297,6 +337,152 @@ namespace UserApi.Migrations
                     b.HasKey("TextId");
 
                     b.ToTable("Markdown");
+                });
+
+            modelBuilder.Entity("UserApi.Data.OriginalCar", b =>
+                {
+                    b.Property<Guid>("IdCar")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id_Car")
+                        .HasDefaultValueSql("(newid())");
+
+                    b.Property<decimal>("Accelerate")
+                        .HasColumnType("decimal(8,2)");
+
+                    b.Property<string>("Aspiration")
+                        .IsRequired()
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(max)");
+
+                    b.Property<string>("Aviability")
+                        .IsRequired()
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(max)");
+
+                    b.Property<decimal>("Braking")
+                        .HasColumnType("decimal(8,2)");
+
+                    b.Property<int>("CarId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CarOrdinal")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Class")
+                        .IsRequired()
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(max)");
+
+                    b.Property<string>("EngineConfiguration")
+                        .IsRequired()
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(max)");
+
+                    b.Property<decimal>("EngineDisplacement")
+                        .HasColumnType("decimal(8,2)");
+
+                    b.Property<string>("EnginePosition")
+                        .IsRequired()
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(max)");
+
+                    b.Property<int>("GearBox")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Handling")
+                        .HasColumnType("decimal(8,2)");
+
+                    b.Property<decimal>("Launch")
+                        .HasColumnType("decimal(8,2)");
+
+                    b.Property<Guid>("MakerId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Maker_Id");
+
+                    b.Property<string>("Model")
+                        .IsRequired()
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(max)");
+
+                    b.Property<int>("NbCylindre")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Offroad")
+                        .HasColumnType("decimal(8,2)");
+
+                    b.Property<int>("Pi")
+                        .HasColumnType("int")
+                        .HasColumnName("PI");
+
+                    b.Property<string>("PictureLink")
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(max)");
+
+                    b.Property<decimal>("PowerBhp")
+                        .HasColumnType("decimal(8,2)")
+                        .HasColumnName("PowerBHP");
+
+                    b.Property<decimal>("PowerKw")
+                        .HasColumnType("decimal(8,2)")
+                        .HasColumnName("PowerKW");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Rarity")
+                        .IsRequired()
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(max)");
+
+                    b.Property<string>("RequiredDlc")
+                        .IsRequired()
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(max)")
+                        .HasColumnName("RequiredDLC");
+
+                    b.Property<decimal>("Speed")
+                        .HasColumnType("decimal(8,2)");
+
+                    b.Property<decimal>("TorqueLbft")
+                        .HasColumnType("decimal(8,2)")
+                        .HasColumnName("TorqueLBFT");
+
+                    b.Property<decimal>("TorqueNm")
+                        .HasColumnType("decimal(8,2)")
+                        .HasColumnName("TorqueNM");
+
+                    b.Property<string>("Transmission")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(max)");
+
+                    b.Property<decimal>("WeightKg")
+                        .HasColumnType("decimal(8,2)")
+                        .HasColumnName("WeightKG");
+
+                    b.Property<decimal>("WeightLbs")
+                        .HasColumnType("decimal(8,2)")
+                        .HasColumnName("WeightLBS");
+
+                    b.Property<string>("WikiLink")
+                        .IsRequired()
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(max)");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("IdCar")
+                        .HasName("PK_Car_1");
+
+                    b.HasIndex(new[] { "MakerId" }, "IX_Car_Maker_Id");
+
+                    b.ToTable("OriginalCar", (string)null);
                 });
 
             modelBuilder.Entity("UserApi.Data.Sessions", b =>
@@ -360,25 +546,31 @@ namespace UserApi.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Accelerate")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(8,2)");
 
                     b.Property<int>("Aspiration")
+                        .IsUnicode(false)
                         .HasColumnType("int");
 
                     b.Property<decimal>("Braking")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(8,2)");
 
                     b.Property<int>("Class")
+                        .IsUnicode(false)
                         .HasColumnType("int");
 
                     b.Property<decimal>("EngineDisplacement")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(8,2)");
 
                     b.Property<int>("EnginePosition")
+                        .IsUnicode(false)
+                        .HasColumnType("int");
+
+                    b.Property<int>("GearBox")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Handling")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(8,2)");
 
                     b.Property<Guid>("IdCar")
                         .HasColumnType("uniqueidentifier");
@@ -392,22 +584,23 @@ namespace UserApi.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Launch")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(8,2)");
 
                     b.Property<int>("NbCylindre")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Offroad")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(8,2)");
 
                     b.Property<int>("Pi")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("PI");
 
-                    b.Property<int>("Power_BHP")
-                        .HasColumnType("int");
+                    b.Property<decimal>("PowerBHP")
+                        .HasColumnType("decimal(8,2)");
 
-                    b.Property<int>("Power_KW")
-                        .HasColumnType("int");
+                    b.Property<decimal>("PowerKW")
+                        .HasColumnType("decimal(8,2)");
 
                     b.Property<int>("PrixModif")
                         .HasColumnType("int");
@@ -416,25 +609,29 @@ namespace UserApi.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("Speed")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(8,2)");
 
-                    b.Property<int>("Torque_LBFT")
-                        .HasColumnType("int");
+                    b.Property<decimal>("TorqueLBFT")
+                        .HasColumnType("decimal(8,2)");
 
-                    b.Property<int>("Torque_NM")
-                        .HasColumnType("int");
+                    b.Property<decimal>("TorqueNM")
+                        .HasColumnType("decimal(8,2)");
 
-                    b.Property<int>("Weight_KG")
-                        .HasColumnType("int");
+                    b.Property<string>("Transmission")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Weight_LBS")
-                        .HasColumnType("int");
+                    b.Property<decimal>("WeightKG")
+                        .HasColumnType("decimal(8,2)");
+
+                    b.Property<decimal>("WeightLBS")
+                        .HasColumnType("decimal(8,2)");
 
                     b.HasKey("KeyCar");
 
                     b.HasIndex("IdUser");
 
-                    b.ToTable("Voitures");
+                    b.ToTable("Voitures", (string)null);
                 });
 
             modelBuilder.Entity("ApiUserSessions", b =>
@@ -513,6 +710,17 @@ namespace UserApi.Migrations
                     b.Navigation("Stage");
                 });
 
+            modelBuilder.Entity("UserApi.Data.OriginalCar", b =>
+                {
+                    b.HasOne("UserApi.Data.Maker", "Maker")
+                        .WithMany("Cars")
+                        .HasForeignKey("MakerId")
+                        .IsRequired()
+                        .HasConstraintName("FK_Car_Maker");
+
+                    b.Navigation("Maker");
+                });
+
             modelBuilder.Entity("UserApi.Data.Voitures", b =>
                 {
                     b.HasOne("UserApi.Data.ApiUser", "User")
@@ -527,6 +735,11 @@ namespace UserApi.Migrations
             modelBuilder.Entity("UserApi.Data.ApiUser", b =>
                 {
                     b.Navigation("Voitures");
+                });
+
+            modelBuilder.Entity("UserApi.Data.Maker", b =>
+                {
+                    b.Navigation("Cars");
                 });
 
             modelBuilder.Entity("UserApi.Data.Stage", b =>

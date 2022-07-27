@@ -18,13 +18,11 @@ namespace UserApi.Controllers
     public class GarageController : ControllerBase
     {
         private readonly UserApiContext _userContext;
-        private readonly CarApiContext _carContext;
         private readonly UserManager<ApiUser> userManager;
 
-        public GarageController(UserApiContext userContext, CarApiContext carContext, UserManager<ApiUser> userManager)
+        public GarageController(UserApiContext userContext, UserManager<ApiUser> userManager)
         {
             _userContext = userContext;
-            _carContext = carContext;
             this.userManager = userManager;
         }
 
@@ -36,82 +34,32 @@ namespace UserApi.Controllers
         /// <response code="400 + Message"></response>
         /// <response code="200">Confirmation ajout de la voiture</response>
         [HttpPost]
-        [Route("add/{DiscordId}")]
-        public async Task<IActionResult> AddCar([FromRoute] string DiscordId, [FromBody] AddCarDTO dto)
+        [Route("add/{DiscordId}/{CarId}")]
+        public async Task<IActionResult> AddCar([FromRoute] string DiscordId, [FromRoute] Guid CarId)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             ApiUser? user = await userManager.FindByEmailAsync(DiscordId);
             if (user == null) return BadRequest("Aucun utilisateur existe avec cet Id");
-            string queryString = @$"SELECT Id_Car, Model, Power_BHP, Power_KW, Torque_LBFT,
-                Torque_NM, Weight_LBS, Weight_KG, EngineDisplacement, NbCylindre,
-                Aspiration, EnginePosition, Speed,
-                Handling, Accelerate, Launch, Braking, Offroad, PI, Class, Price FROM Car
-                WHERE Id_Car = '{dto.CarId}'";
 
-            Voitures? car = null;
-            string? model = null;
-            string connectionString = @"server=172.17.0.2,1433;database=Cars;User Id=sa;Password=*5273%0&Q9%8q!3@#^1#";
-            
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                SqlCommand command = new SqlCommand(queryString, connection);
-                connection.Open();
-                SqlDataReader reader = command.ExecuteReader();
-                try
-                {
-                    while (reader.Read())
-                    {
-                        model = reader["Model"].ToString();
-                        car = new Voitures
-                        {
-                            IdUser = user.Id,
-                            IdCar = Guid.Parse(reader["Id_Car"].ToString()),
-                            Power_BHP = Convert.ToInt32(reader["Power_BHP"]),
-                            Power_KW = Convert.ToInt32(reader["Power_KW"]),
-                            Torque_LBFT = Convert.ToInt32(reader["Torque_LBFT"]),
-                            Torque_NM = Convert.ToInt32(reader["Torque_NM"]),
-                            Weight_LBS = Convert.ToInt32(reader["Weight_LBS"]),
-                            Weight_KG = Convert.ToInt32(reader["Weight_KG"]),
-                            EngineDisplacement = Convert.ToDecimal(reader["EngineDisplacement"]),
-                            NbCylindre = Convert.ToInt32(reader["NbCylindre"]),
-                            EnginePosition = (EnginePosition)Enum.Parse(typeof(EnginePosition), reader["EnginePosition"].ToString()),
-                            Aspiration = (Aspiration)Enum.Parse(typeof(Aspiration), reader["Aspiration"].ToString()),
-                            PrixModif = 0,
-                            PrixTotal = Convert.ToInt32(reader["Price"]),
-                            Speed = Convert.ToDecimal(reader["Speed"]),
-                            Handling = Convert.ToDecimal(reader["Handling"]),
-                            Accelerate = Convert.ToDecimal(reader["Accelerate"]),
-                            Launch = Convert.ToDecimal(reader["Launch"]),
-                            Braking = Convert.ToDecimal(reader["Braking"]),
-                            Offroad = Convert.ToDecimal(reader["Offroad"]),
-                            Pi = Convert.ToInt32(reader["PI"]),
-                            Class = (Class)Enum.Parse(typeof(Class), reader["Class"].ToString()),
-                            Imatriculation = "",
-                        };
-                    }
-                }
-                finally
-                {
-                    reader.Close();
-                }
-            }
+            OriginalCar? originalCar = await _userContext.OriginalCars
+                .FirstOrDefaultAsync(oc => oc.IdCar == CarId);
 
-            if (car == null) return BadRequest("Aucune voiture trouvé avec cette id");
-            
+            if (originalCar == null) return BadRequest("Aucune voiture trouvé avec cette id");
+
 
             try
             {
-                _userContext.Voitures.Add(car);
+                _userContext.Voitures.Add(originalCar.ToVoiture(user.Id));
                 await _userContext.SaveChangesAsync();
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest($"fail : {e.Message}");
                 throw;
             }
 
-            return Ok($"La voiture : {model}, viens d'être ajouté dans nos registre au nom de : {user.UserName}");
+            return Ok($"La voiture : {originalCar.Model}, viens d'être ajouté dans nos registre au nom de : {user.UserName}");
         }
 
         /// <summary>
@@ -130,13 +78,36 @@ namespace UserApi.Controllers
                 .Include(c => c.User)
                 .FirstOrDefaultAsync(c => c.KeyCar == KeyCar);
 
-            Car? originalCar = await _carContext.Cars
+            OriginalCar? originalCar = await _userContext.OriginalCars
                                             .Include(c => c.Maker)
                                             .FirstOrDefaultAsync(c => c.IdCar == car.IdCar);
 
 
             return car.ToModel(originalCar.ToModel());
         }
+
+        /// <summary>
+        /// Get toute les voiture de tous les garrages
+        /// </summary>
+        /// <response code="400 + Message"></response>
+        /// <returns>Liste des voiture de tous les garrages</returns>
+        [HttpGet]
+        [Route("all")]
+        public async Task<ActionResult<List<CarDTO>>> GetAllCars()
+        {
+            List<Voitures> voitures = await _userContext.Voitures
+                .Include(v => v.User)
+                .ToListAsync();
+
+            return voitures.Select(v =>
+            {
+                OriginalCar? originalCar = _userContext.OriginalCars
+                                            .Include(c => c.Maker)
+                                            .FirstOrDefault(c => c.IdCar == v.IdCar);
+                return v.ToModel(originalCar.ToModel());
+            }).ToList();
+        }
+
 
         /// <summary>
         /// Get toute les voiture du garage d'un utilisateur
@@ -188,19 +159,22 @@ namespace UserApi.Controllers
 
             if (entity == null) return BadRequest("Aucune voiture avec cette id");
 
-            
-            entity.Power_BHP = dto.Power_BHP;
-            entity.Power_KW = dto.Power_KW;
-            entity.Torque_LBFT = dto.Torque_LBFT;
-            entity.Torque_NM = dto.Torque_NM;
-            entity.Weight_LBS = dto.Weight_LBS;
-            entity.Weight_KG = dto.Weight_KG;
+
+            entity.PowerBHP = dto.PowerBHP;
+            entity.PowerKW = dto.PowerKW;
+            entity.TorqueLBFT = dto.TorqueLBFT;
+            entity.TorqueNM = dto.TorqueNM;
+            entity.WeightLBS = dto.WeightLBS;
+            entity.WeightKG = dto.WeightKG;
+            entity.Transmission = dto.Transmission;
+            entity.GearBox = dto.GearBox;
+            entity.WeightKG = dto.WeightKG;
             entity.EngineDisplacement = dto.EngineDisplacement;
             entity.NbCylindre = dto.NbCylindre;
-            entity.EnginePosition = dto.EnginePosition;
+            entity.EnginePosition = (EnginePosition)Enum.Parse(typeof(EnginePosition), dto.EnginePosition);
             entity.PrixTotal += dto.PrixModif;
             entity.PrixModif += dto.PrixModif;
-            entity.Aspiration = dto.Aspiration;
+            entity.Aspiration = (Aspiration)Enum.Parse(typeof(Aspiration), dto.Aspiration);
             entity.Speed = dto.Speed;
             entity.Handling = dto.Handling;
             entity.Accelerate = dto.Accelerate;
@@ -208,8 +182,8 @@ namespace UserApi.Controllers
             entity.Braking = dto.Braking;
             entity.Offroad = dto.Offroad;
             entity.Pi = dto.Pi;
-            entity.Class = dto.Class;
-            entity.Imatriculation = dto.Imatriculation;
+            entity.Class = (Class)Enum.Parse(typeof(Class), dto.Class);
+            entity.Imatriculation = dto.Imatriculation ?? String.Empty;
 
 
             try
@@ -218,7 +192,7 @@ namespace UserApi.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                    return NotFound();
+                return NotFound();
             }
 
             return Ok($"Voiture Modifiée");

@@ -8,29 +8,33 @@ namespace UserApi.Models.Garage
         [Required]
         public Guid? KeyCar { get; set; }
         [Required]
-        public int Power_BHP { get; set; }
+        public int PowerBHP { get; set; }
         [Required]
-        public int Power_KW { get; set; }
+        public int PowerKW { get; set; }
         [Required]
-        public int Torque_LBFT { get; set; }
+        public int TorqueLBFT { get; set; }
         [Required]
-        public int Torque_NM { get; set; }
+        public int TorqueNM { get; set; }
         [Required]
-        public int Weight_LBS { get; set; }
+        public int WeightLBS { get; set; }
         [Required]
-        public int Weight_KG { get; set; }
+        public string Transmission { get; set; }
+        [Required]
+        public int GearBox { get; set; }
+        [Required]
+        public int WeightKG { get; set; }
         [Required]
         public decimal EngineDisplacement { get; set; }
         [Required]
         public int NbCylindre { get; set; }
         [Required]
-        public EnginePosition EnginePosition { get; set; }
+        public string EnginePosition { get; set; }
         [Required]
         public int PrixTotal { get; set; }
         [Required]
         public int PrixModif { get; set; }
         [Required]
-        public Aspiration Aspiration { get; set; }
+        public string Aspiration { get; set; }
         [Required]
         public decimal Speed { get; set; }
         [Required]
@@ -46,8 +50,8 @@ namespace UserApi.Models.Garage
         [Required]
         public int Pi { get; set; }
         [Required]
-        public Class Class { get; set; }
-        [Required]
+        public string Class { get; set; }
+        //[Required]
         public string Imatriculation { get; set; }
     }
 }

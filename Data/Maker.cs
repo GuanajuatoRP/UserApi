@@ -7,7 +7,7 @@ namespace UserApi.Data
     {
         public Maker()
         {
-            Cars = new HashSet<Car>();
+            Cars = new HashSet<OriginalCar>();
         }
 
         public Guid IdMaker { get; set; }
@@ -18,6 +18,6 @@ namespace UserApi.Data
         public string? Related { get; set; }
         public string? WikiLink { get; set; }
 
-        public virtual ICollection<Car> Cars { get; set; }
+        public virtual ICollection<OriginalCar> Cars { get; set; }
     }
 }

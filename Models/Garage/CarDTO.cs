@@ -23,25 +23,25 @@ namespace UserApi.Models.Garage
         public string EngineConfiguration { get; set; }
 
 
-        public decimal Original_PowerBhp { get; set; }
-        public decimal Original_PowerKw { get; set; }
-        public decimal Original_TorqueLbft { get; set; }
-        public decimal Original_TorqueNm { get; set; }
-        public decimal Original_WeightLbs { get; set; }
-        public decimal Original_WeightKg { get; set; }
-        public decimal Original_EngineDisplacement { get; set; }
-        public int Original_NbCylindre { get; set; }
-        public string Original_Aspiration { get; set; }
-        public string Original_EnginePosition { get; set; }
-        public decimal Original_Speed { get; set; }
-        public decimal Original_Handling { get; set; }
-        public decimal Original_Accelerate { get; set; }
-        public decimal Original_Launch { get; set; }
-        public decimal Original_Braking { get; set; }
-        public decimal Original_Offroad { get; set; }
-        public int Original_Pi { get; set; }
+        public decimal OriginalPowerBhp { get; set; }
+        public decimal OriginalPowerKw { get; set; }
+        public decimal OriginalTorqueLbft { get; set; }
+        public decimal OriginalTorqueNm { get; set; }
+        public decimal OriginalWeightLbs { get; set; }
+        public decimal OriginalWeightKg { get; set; }
+        public decimal OriginalEngineDisplacement { get; set; }
+        public int OriginalNbCylindre { get; set; }
+        public string OriginalAspiration { get; set; }
+        public string OriginalEnginePosition { get; set; }
+        public decimal OriginalSpeed { get; set; }
+        public decimal OriginalHandling { get; set; }
+        public decimal OriginalAccelerate { get; set; }
+        public decimal OriginalLaunch { get; set; }
+        public decimal OriginalBraking { get; set; }
+        public decimal OriginalOffroad { get; set; }
+        public int OriginalPi { get; set; }
         public int OriginalPrice { get; set; }
-        public string Original_Class { get; set; }
+        public string OriginalClass { get; set; }
 
 
 

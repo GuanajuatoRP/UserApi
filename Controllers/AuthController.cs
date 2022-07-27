@@ -17,7 +17,7 @@ namespace UserApi.Controllers
     /// <summary>
     /// Contrôlleur d'Auth et de gestion des utilisateurs
     /// </summary>
-    [Authorize]
+    //[Authorize]
     [Route("")]
     [ApiController]
     public class AuthController : ControllerBase
@@ -39,6 +39,7 @@ namespace UserApi.Controllers
         /// Initialise les table avec les rôles et l'utilisateur Admin
         /// </summary>
         /// <response code="200 + Message"></response>
+        [AllowAnonymous]
         [HttpPost]
         [Route("Initialize")]
         public async Task<IActionResult> Initialize()
@@ -284,6 +285,8 @@ namespace UserApi.Controllers
 
              return Ok("Le mot de passe a été modifié avec succès");
          }
+
+
      }
 
 }

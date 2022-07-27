@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace UserApi.Data
 {
-    public partial class Car
+    public partial class OriginalCar
     {
         public Guid IdCar { get; set; }
         public int CarId { get; set; }
