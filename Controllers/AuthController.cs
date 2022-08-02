@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -26,6 +27,8 @@ namespace UserApi.Controllers
         private readonly UserManager<ApiUser> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly JWTSettings jwtSettings;
+        private readonly RegistrationSettings registrationSettings;
+        private readonly ApiToBotSettings apiToBotSettings;
 
         public AuthController(UserApiContext context, UserManager<ApiUser> userManager, RoleManager<IdentityRole> roleManager, JWTSettings jwtSettings)
         {
@@ -53,13 +56,14 @@ namespace UserApi.Controllers
         /// <summary>
         /// Permet de register un user dans la DB
         /// </summary>
+        /// <param name="discordId">id discord de l'utilisateur</param>
         /// <param name="dto">Model de l'utilisateur</param>
         /// <response code="400 + Message"></response>
         /// <response code="200 + Message"></response>
         [AllowAnonymous]
         [HttpPost]
-        [Route("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterDTO dto)
+        [Route("register/{discordId}")]
+        public async Task<IActionResult> Register([FromRoute] string discordId, [FromBody] RegisterDTO dto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
@@ -72,11 +76,11 @@ namespace UserApi.Controllers
             {
                 UserName = $"{dto.Prenom}{dto.Nom}",
                 Email = dto.DiscordId,
-                EmailConfirmed = true,
+                EmailConfirmed = false,
                 Prenom = dto.Prenom,
                 Nom = dto.Nom,
                 Sexe = dto.Sexe,
-                Argent = dto.Argent,
+                Argent = registrationSettings.defaultMoney,
                 CreatedAt = DateTime.Now,
                 Permis = PermisName.NA,
                 Points = 0,
@@ -86,16 +90,45 @@ namespace UserApi.Controllers
             };
 
             IdentityResult? result = await userManager.CreateAsync(user, dto.Password);
-            if (result.Succeeded)
-            {
-                await userManager.AddToRoleAsync(user, Roles.Visiteur);
-            }
-            else return BadRequest(result.Errors);
+            if (result.Succeeded == false) BadRequest(result.Errors);
 
-            return Ok($"Le compte a été crée avec le username : {user.UserName}");
-            //string? registrationToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
-            //return Ok(registrationToken);
+
+
+            string? registrationToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
+            //discord valide token stp :D
+            var url = Path.Combine(apiToBotSettings.baseURI, "sendRegisterValidationButton/", user.Email);
+            HttpClient client = new();
+            string json = JsonConvert.SerializeObject(registrationToken);
+            StringContent data = new StringContent(json, Encoding.UTF8, "application/json");
+            _ = await client.PostAsync(url, data);
+            return Ok("L'utilisateur a été crée et est en attente de validation");
         }
+
+        /// <summary>
+        /// Permet de valider un compte user
+        /// </summary>
+        /// <param name="discordId">id discord de l'utilisateur</param>
+        /// <param name="token">Token de validation du compte</param>
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("register/validation/{discordId}")]
+        public async Task<IActionResult> ValidationRegister([FromRoute] string discordId, [FromBody] ValidationRegistrationDTO dto)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            if (discordId != dto.discordId) return BadRequest("DiscordIds do not match");
+
+            ApiUser userExists = await userManager.FindByEmailAsync(dto.discordId);
+            if (userExists != null) return BadRequest("L'utilisateur existe déjà");
+
+           
+            IdentityResult registrationToken = await userManager.ConfirmEmailAsync(userExists,dto.token);
+
+            if (registrationToken.Succeeded == false) return BadRequest(registrationToken.Errors);
+
+            return Ok();
+        }
+
 
 
         /// <summary>
