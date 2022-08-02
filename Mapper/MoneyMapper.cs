@@ -9,8 +9,6 @@ namespace UserApi.Mapper
         {
             return new MoneyDTO
             {
-                DiscordId = user.Email,
-                Username = user.UserName,
                 Money = user.Argent,
             };
         }

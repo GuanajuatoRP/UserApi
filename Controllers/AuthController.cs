@@ -218,14 +218,14 @@ namespace UserApi.Controllers
          /// Check si l'utilisateur existe dans la DB
          /// </summary>
          /// <param name="DiscordId">discord id de l'utilisateur a check</param>
-         /// <response code="400 + Message"></response>
+         /// <response code="204">l'utilisateur n'existe pas</response>
          /// <response code="200">Username de l'utilisateur</response>
          [HttpGet]
          [Route("UserExist/{DiscordId}")]
          public async Task<IActionResult> UserExist([FromRoute] string DiscordId)
          {
              ApiUser? user = await userManager.FindByEmailAsync(DiscordId);
-             if (user == null) return BadRequest("Aucun utilisateur existe avec cet id");
+             if (user == null) return NoContent();
              else return Ok(user.UserName);
          }
 
