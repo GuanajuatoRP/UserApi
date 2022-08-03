@@ -20,6 +20,8 @@ var builder = WebApplication.CreateBuilder(args);
 
     //builder.Services.AddSingleton(builder.Configuration.GetSection("ApiSettings").Get<ApiSettings>());
     builder.Services.AddSingleton(builder.Configuration.GetSection("JWTSettings").Get<JWTSettings>());
+    builder.Services.AddSingleton(builder.Configuration.GetSection("ApiToBotSettings").Get<ApiToBotSettings>());
+    builder.Services.AddSingleton(builder.Configuration.GetSection("RegistrationSettings").Get<RegistrationSettings>());
     builder.Services.AddControllers();
 
     AddCORS(builder); //Permet de d�finir les CallsOrigins 

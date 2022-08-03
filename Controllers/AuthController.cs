@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 using UserApi.Data;
 using UserApi.Data.Enum;
 using UserApi.Models.Auth;
@@ -30,12 +30,19 @@ namespace UserApi.Controllers
         private readonly RegistrationSettings registrationSettings;
         private readonly ApiToBotSettings apiToBotSettings;
 
-        public AuthController(UserApiContext context, UserManager<ApiUser> userManager, RoleManager<IdentityRole> roleManager, JWTSettings jwtSettings)
+        public AuthController(UserApiContext context,
+                              UserManager<ApiUser> userManager,
+                              RoleManager<IdentityRole> roleManager,
+                              JWTSettings jwtSettings,
+                              RegistrationSettings registrationSettings,
+                              ApiToBotSettings apiToBotSettings)
         {
             _context = context;
             this.userManager = userManager;
             this.roleManager = roleManager;
             this.jwtSettings = jwtSettings;
+            this.registrationSettings = registrationSettings;
+            this.apiToBotSettings = apiToBotSettings;
         }
 
         /// <summary>
@@ -74,7 +81,7 @@ namespace UserApi.Controllers
             Stage? stage = await _context.Stage.FirstOrDefaultAsync(s => s.Name == StageName.NA);
             ApiUser user = new ApiUser
             {
-                UserName = $"{dto.Prenom}{dto.Nom}",
+                UserName = $"{dto.Prenom} {dto.Nom}",
                 Email = dto.DiscordId,
                 EmailConfirmed = false,
                 Prenom = dto.Prenom,
@@ -96,11 +103,11 @@ namespace UserApi.Controllers
 
             string? registrationToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
             //discord valide token stp :D
-            var url = Path.Combine(apiToBotSettings.baseURI, "sendRegisterValidationButton/", user.Email);
+            var url = $"{apiToBotSettings.baseURI}sendRegisterValidationButton/{user.Email}";
             HttpClient client = new();
-            string json = JsonConvert.SerializeObject(registrationToken);
+            string json = JsonSerializer.Serialize(registrationToken);
             StringContent data = new StringContent(json, Encoding.UTF8, "application/json");
-            _ = await client.PostAsync(url, data);
+            await client.PostAsync(url, data);
             return Ok("L'utilisateur a été crée et est en attente de validation");
         }
 
