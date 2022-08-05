@@ -163,7 +163,7 @@ void AddItentity(WebApplicationBuilder builder)
         options.SignIn.RequireConfirmedAccount = true;
 
         options.ClaimsIdentity.RoleClaimType = "Roles";
-        options.ClaimsIdentity.UserNameClaimType = "Name";
+        options.ClaimsIdentity.UserIdClaimType = "Username";
         options.ClaimsIdentity.EmailClaimType = "DiscordId";
 
         //Password requirement

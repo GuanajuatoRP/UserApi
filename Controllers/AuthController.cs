@@ -8,6 +8,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
+using System.Web;
 using UserApi.Data;
 using UserApi.Data.Enum;
 using UserApi.Models.Auth;
@@ -81,12 +82,13 @@ namespace UserApi.Controllers
             Stage? stage = await _context.Stage.FirstOrDefaultAsync(s => s.Name == StageName.NA);
             ApiUser user = new ApiUser
             {
-                UserName = $"{dto.Prenom} {dto.Nom}",
+                UserName = $"{dto.Prenom}{dto.Nom}",
                 Email = dto.DiscordId,
                 EmailConfirmed = false,
                 Prenom = dto.Prenom,
                 Nom = dto.Nom,
                 Sexe = dto.Sexe,
+                IdStage = stage.StageId,
                 Argent = registrationSettings.defaultMoney,
                 CreatedAt = DateTime.Now,
                 Permis = PermisName.NA,
@@ -97,15 +99,18 @@ namespace UserApi.Controllers
             };
 
             IdentityResult? result = await userManager.CreateAsync(user, dto.Password);
-            if (result.Succeeded == false) BadRequest(result.Errors);
+            if (result.Succeeded == false) return BadRequest(result.Errors); 
 
 
 
-            string? registrationToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
+            string registrationToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
+            registrationToken = HttpUtility.UrlEncode(registrationToken);
+
+            EmailConfirmationTokenDTO tokenDTO = new() { token = registrationToken };
             //discord valide token stp :D
             var url = $"{apiToBotSettings.baseURI}sendRegisterValidationButton/{user.Email}";
             HttpClient client = new();
-            string json = JsonSerializer.Serialize(registrationToken);
+            string json = JsonSerializer.Serialize(tokenDTO);
             StringContent data = new StringContent(json, Encoding.UTF8, "application/json");
             await client.PostAsync(url, data);
             return Ok("L'utilisateur a été crée et est en attente de validation");
@@ -121,17 +126,28 @@ namespace UserApi.Controllers
         [Route("register/validation/{discordId}")]
         public async Task<IActionResult> ValidationRegister([FromRoute] string discordId, [FromBody] ValidationRegistrationDTO dto)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (!ModelState.IsValid) return BadRequest("qqsdqsfsf"+ModelState);
 
             if (discordId != dto.discordId) return BadRequest("DiscordIds do not match");
 
-            ApiUser userExists = await userManager.FindByEmailAsync(dto.discordId);
-            if (userExists != null) return BadRequest("L'utilisateur existe déjà");
+            ApiUser user = await userManager.FindByEmailAsync(dto.discordId);
+            if (user == null) return BadRequest("L'utilisateur n'existe pas");
 
-           
-            IdentityResult registrationToken = await userManager.ConfirmEmailAsync(userExists,dto.token);
+            IdentityResult registrationToken = await userManager.ConfirmEmailAsync(user, dto.token);
 
-            if (registrationToken.Succeeded == false) return BadRequest(registrationToken.Errors);
+            if (registrationToken.Succeeded) await userManager.AddToRoleAsync(user, Roles.User);
+            else return BadRequest("aaaaa" + registrationToken.Errors);
+
+
+            userValidatedOnDbDTO userValidatedOnDbDTO = new() { userId = user.Id, discordId = user.Email };
+
+            var url = $"{apiToBotSettings.baseURI}userValidatedOnDB/{user.Id}";
+
+            string json = JsonSerializer.Serialize(userValidatedOnDbDTO);
+            StringContent data = new StringContent(json, Encoding.UTF8, "application/json");
+
+            HttpClient client = new();
+            await client.PostAsync(url, data);
 
             return Ok();
         }
