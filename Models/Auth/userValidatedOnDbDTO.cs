@@ -2,11 +2,11 @@
 
 namespace UserApi.Models.Auth
 {
-    public class ValidationRegistrationDTO
+    public class userValidatedOnDbDTO
     {
         [Required]
-        public string discordId { get; set; }
+        public string userId { get; set; }
         [Required]
-        public string token { get; set; }
+        public string discordId { get; set; }
     }
 }
