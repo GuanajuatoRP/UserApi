@@ -26,6 +26,20 @@ namespace UserApi.Controllers
             _userContext = userContext;
         }
 
+        [HttpGet("Search")]
+        public async Task<ActionResult<IEnumerable<OriginalCarDTO>>> Search([FromQuery] OriginalCarSearchModel searchModel)
+        {
+            List<OriginalCar> originalCars = await _userContext.OriginalCars
+                .Include(c => c.Maker)
+                .Where(c => string.IsNullOrWhiteSpace(searchModel.marque) || c.Maker.Name == searchModel.marque)
+                .Where(c => string.IsNullOrWhiteSpace(searchModel.pays) || c.Maker.Origin == searchModel.pays)
+                .Where(c => string.IsNullOrWhiteSpace(searchModel.type) || c.Type == searchModel.type)
+                .Where(c => string.IsNullOrWhiteSpace(searchModel.modele) || c.Model.Contains(searchModel.modele))
+                .ToListAsync();
+
+            return originalCars.Select(c => c.ToModel()).ToList();
+        }
+
         /// <summary>
         /// Get toute les voiture d'origine
         /// </summary>
@@ -86,4 +100,5 @@ namespace UserApi.Controllers
 
         }
     }
+    public record OriginalCarSearchModel(string? marque, string? pays, string? type, string? modele);
 }

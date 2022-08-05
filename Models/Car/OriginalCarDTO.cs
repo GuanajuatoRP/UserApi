@@ -6,6 +6,7 @@
         public int CarId { get; set; }
         public int CarOrdinal { get; set; }
         public string Maker { get; set; }
+        public string Origin { get; set; }
         public string Model { get; set; } = null!;
         public int Year { get; set; }
         public decimal PowerBhp { get; set; }

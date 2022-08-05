@@ -14,6 +14,7 @@ namespace UserApi.Mapper
                 CarId = car.CarId,
                 CarOrdinal = car.CarOrdinal,
                 Maker = car.Maker.Name,
+                Origin = car.Maker.Origin ?? string.Empty,
                 Model = car.Model,
                 Year = car.Year,
                 PowerBhp = car.PowerBhp,
