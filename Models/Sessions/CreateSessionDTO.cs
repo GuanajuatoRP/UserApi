@@ -7,7 +7,5 @@ namespace UserApi.Models.Sessions
     {
         [Required]
         public SessionType Type { get; set; }
-        [Required]
-        public DateTime Debut { get; set; }
     }
 }

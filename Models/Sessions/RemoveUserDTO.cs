@@ -2,9 +2,9 @@
 
 namespace UserApi.Models.Sessions
 {
-    public class AddUserDTO
+    public class RemoveUserDTO
     {
         [Required]
-        public string userId { get; set; }
+        public string DiscordId { get; set; }
     }
 }

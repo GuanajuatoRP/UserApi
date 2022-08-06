@@ -1,4 +1,5 @@
-﻿using UserApi.Data;
+﻿using System.Globalization;
+using UserApi.Data;
 using UserApi.Models.Sessions;
 
 namespace UserApi.Mapper
@@ -7,11 +8,12 @@ namespace UserApi.Mapper
     {
         public static Sessions CreateClass(this CreateSessionDTO dto)
         {
+
             return new Sessions
             {
                 Type = dto.Type,
-                Debut = dto.Debut.ToString("dd/MM/yyyy HH:mm"),
-                Fin = dto.Debut.AddHours(1).ToString("dd/MM/yyyy HH:mm"),
+                Debut = DateTime.UtcNow.AddHours(2).ToString(),
+                Fin = DateTime.UtcNow.AddHours(3).ToString(),
                 NbParticipant = 0
             };
         }
@@ -36,7 +38,8 @@ namespace UserApi.Mapper
             {
                 SessionId = session.SessionId,
                 Type = session.Type.ToString(),
-                Date = session.Debut,
+                StartDate = session.Debut,
+                EndDate = session.Fin,
                 NbParticipant = session.NbParticipant,
                 SessionNumber = session.SessionNumber,
                 Users = session.Users?.Select(u => u.ToModel()).ToList()

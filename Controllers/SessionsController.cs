@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using UserApi.Data;
 using UserApi.Mapper;
 using UserApi.Models.Sessions;
+using UserApi.Models.User;
 
 namespace UserApi.Controllers
 {
@@ -78,6 +79,32 @@ namespace UserApi.Controllers
         }
 
         /// <summary>
+        /// Get l'ensemble de tous le utilisateur qui ne sont pas présent dans la session
+        /// </summary>
+        /// <param name="id">id de sessions</param>
+        /// <response code="200">Liste d'utilisateur </response>
+        /// <response code="400 + Message"></response>
+        /// <response code="404">Session not found</response>
+        /// <returns>Model sessions</returns>
+        [HttpGet]
+        [Route("{id}/users")]
+        public async Task<ActionResult<List<UserDTO>>> getUserAreNotInSessions([FromRoute] Guid id)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            Sessions? session = _context.Sessions
+                .Include(s => s.Users).
+                FirstOrDefault(s => s.SessionId == id);
+
+            if (session == null) return NotFound();
+
+            List<ApiUser> users = await _context.Users
+                .Where(u => !session.Users.Contains(u))
+                .ToListAsync();
+
+            return users.ToUserDTOList();
+        }
+
+        /// <summary>
         /// Edit une sessions
         /// </summary>
         /// <param name="id">Id de la sessions</param>
@@ -123,11 +150,11 @@ namespace UserApi.Controllers
         /// </summary>
         /// <param name="id">id de sessions</param>
         /// <param name="dto">Model d'ajout de sessions</param>
-        /// <response code="400 + Message"></response>
-        /// <response code="200">Confirmation + username + id session</response>
+        /// <response code="404"></response>
+        /// <response code="200">tous les utilisateur on été ajouté</response>
         [HttpPut]
         [Route("add/{id}")]
-        public async Task<IActionResult> AddUserSessions([FromRoute] Guid id, [FromBody] AddUserDTO dto)
+        public async Task<IActionResult> AddUserSessions([FromRoute] Guid id, [FromBody] List<AddUserDTO> dtos)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
@@ -136,12 +163,17 @@ namespace UserApi.Controllers
                 .FirstOrDefaultAsync(s => s.SessionId == id);
             if (session == null) return NotFound("Aucune sessions n'existe avec cet id");
 
-            ApiUser user = await userManager.FindByEmailAsync(dto.DiscordId);
-            if (user == null) return NotFound("Aucun user n'existe avec cet id");
+            foreach(var dto in dtos)
+            {
+                ApiUser user = await userManager.FindByIdAsync(dto.userId);
+                if (user == null) return NotFound($"Aucun user n'existe avec cet id: {dto.userId}");
 
-            if (session.Users.Contains(user)) return BadRequest("L'utilisateur spécifier est déja présent dans la session");
-            session.Users.Add(user);
-            session.NbParticipant++;
+                if (!session.Users.Contains(user))
+                {
+                    session.Users.Add(user);
+                    session.NbParticipant++;
+                };
+            }
 
 
             try
@@ -160,7 +192,7 @@ namespace UserApi.Controllers
                 }
             }
 
-            return Ok($"{user.UserName} a été ajouté a la session : {id}");
+            return Ok($"les utilisateurs ont été ajouté a la session : {id}");
         }
 
         /// <summary>
@@ -172,7 +204,7 @@ namespace UserApi.Controllers
         /// <reponse code="200">Confirmation + username + id sessions</reponse>
         [HttpPut]
         [Route("remove/{id}")]
-        public async Task<IActionResult> RemoveUserSessions([FromRoute] Guid id, [FromBody] AddUserDTO dto)
+        public async Task<IActionResult> RemoveUserSessions([FromRoute] Guid id, [FromBody] RemoveUserDTO dto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
