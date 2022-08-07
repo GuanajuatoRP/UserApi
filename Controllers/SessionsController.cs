@@ -144,17 +144,17 @@ namespace UserApi.Controllers
 
             return Ok($"Id de la sessions modifier : {id}");
         }
-        
+
         /// <summary>
-        /// Ajoute un user a une sessions
+        /// Ajoute des users a une sessions
         /// </summary>
         /// <param name="id">id de sessions</param>
-        /// <param name="dto">Model d'ajout de sessions</param>
+        /// <param name="usernames">liste de username</param>
         /// <response code="404"></response>
         /// <response code="200">tous les utilisateur on été ajouté</response>
-        [HttpPut]
-        [Route("add/{id}")]
-        public async Task<IActionResult> AddUserSessions([FromRoute] Guid id, [FromBody] List<AddUserDTO> dtos)
+        [HttpPost]
+        [Route("add/{id}/users")]
+        public async Task<IActionResult> AddUserSessions([FromRoute] Guid id, [FromBody] List<string> usernames)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
@@ -163,15 +163,67 @@ namespace UserApi.Controllers
                 .FirstOrDefaultAsync(s => s.SessionId == id);
             if (session == null) return NotFound("Aucune sessions n'existe avec cet id");
 
-            foreach(var dto in dtos)
+            foreach(var username in usernames)
             {
-                ApiUser user = await userManager.FindByIdAsync(dto.userId);
-                if (user == null) return NotFound($"Aucun user n'existe avec cet id: {dto.userId}");
+                ApiUser user = await userManager.FindByNameAsync(username);
+                if (user == null) return NotFound($"Aucun user n'existe avec cet id: {username}");
 
                 if (!session.Users.Contains(user))
                 {
                     session.Users.Add(user);
+                    user.NbSessions++;
                     session.NbParticipant++;
+                };
+            }
+
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException e)
+            {
+                if (!SessionsExists(id))
+                {
+                    return NotFound(e.Message);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return Ok($"les utilisateurs ont été ajouté a la session : {id}");
+        }
+
+        /// <summary>
+        /// retire des users d'une sessions
+        /// </summary>
+        /// <param name="id">id de sessions</param>
+        /// <param name="usernames">Liste de username</param>
+        /// <response code="404"></response>
+        /// <response code="200">tous les utilisateur on été ajouté</response>
+        [HttpPost]
+        [Route("remove/{id}/users")]
+        public async Task<IActionResult> RemoveUserSessions([FromRoute] Guid id, [FromBody] List<string> usernames)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            Sessions? session = await _context.Sessions
+                .Include(s => s.Users)
+                .FirstOrDefaultAsync(s => s.SessionId == id);
+            if (session == null) return NotFound("Aucune sessions n'existe avec cet id");
+
+            foreach(var username in usernames)
+            {
+                ApiUser user = await userManager.FindByNameAsync(username);
+                if (user == null) return NotFound($"Aucun user n'existe avec cet username: {username}");
+
+                if (session.Users.Contains(user))
+                {
+                    session.Users.Remove(user);
+                    user.NbSessions--;
+                    session.NbParticipant--;
                 };
             }
 
