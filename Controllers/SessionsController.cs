@@ -144,6 +144,46 @@ namespace UserApi.Controllers
 
             return Ok($"Id de la sessions modifier : {id}");
         }
+        
+        /// <summary>
+        /// Permet de modifier les dates d'une session
+        /// </summary>
+        /// <param name="id">Id de la sessions</param>
+        /// <param name="dto">model de modif de sessions</param>
+        /// <response code="400 + Message"></response>
+        /// <response code="200">Confirmation + id sessions</response>
+        [HttpPut]
+        [Route("{id}/date")]
+        public async Task<IActionResult> EditSessionDate([FromRoute] Guid id, [FromBody] EditSessionDateDTO dto)
+        {
+            if (id != dto.SessionId) return BadRequest("L'id est != de celui du DTO");
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            Sessions? entity = await _context.Sessions.FindAsync(id);
+
+            if (entity == null) return NotFound("Aucune entité n'existe avec cet id");
+
+            entity.Debut = dto.Debut;
+            entity.Fin = dto.Fin;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!SessionsExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return Ok($"Id de la sessions modifier : {id}");
+        }
 
         /// <summary>
         /// Ajoute des users a une sessions
