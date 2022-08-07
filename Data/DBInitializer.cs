@@ -26,7 +26,21 @@ namespace UserApi.Data
                         throw new ApplicationException("Adding role '" + role + "' failed with error(s): " + resultAddRole.Errors);
                 }
             }
+            
+            ////Adding roles
+            //List<Stage> stages = StageInit.GetAllStages();
 
+            //foreach (var stage in stages)
+            //{
+            //    if (!await roleManager.RoleExistsAsync(role))
+            //    {
+            //        var resultAddRole = await roleManager.CreateAsync(new IdentityRole(role));
+            //        if (!resultAddRole.Succeeded)
+            //            throw new ApplicationException("Adding role '" + role + "' failed with error(s): " + resultAddRole.Errors);
+            //    }
+            //}
+
+            //Adding Admin
             ApiUser admin = new ApiUser
             {
                 UserName = "Dercraker",
