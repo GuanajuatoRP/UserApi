@@ -87,7 +87,7 @@ namespace UserApi.Controllers
         /// <response code="404">Session not found</response>
         /// <returns>Model sessions</returns>
         [HttpGet]
-        [Route("{id}/users")]
+        [Route("{id}/!users")]
         public async Task<ActionResult<List<UserDTO>>> getUserAreNotInSessions([FromRoute] Guid id)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -99,6 +99,32 @@ namespace UserApi.Controllers
 
             List<ApiUser> users = await _context.Users
                 .Where(u => !session.Users.Contains(u))
+                .ToListAsync();
+
+            return users.ToUserDTOList();
+        }
+        
+        /// <summary>
+        /// Get l'ensemble de tous le utilisateur qui sont présent dans la session
+        /// </summary>
+        /// <param name="id">id de sessions</param>
+        /// <response code="200">Liste d'utilisateur </response>
+        /// <response code="400 + Message"></response>
+        /// <response code="404">Session not found</response>
+        /// <returns>Model sessions</returns>
+        [HttpGet]
+        [Route("{id}/users")]
+        public async Task<ActionResult<List<UserDTO>>> getUserAreInSessions([FromRoute] Guid id)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            Sessions? session = _context.Sessions
+                .Include(s => s.Users).
+                FirstOrDefault(s => s.SessionId == id);
+
+            if (session == null) return NotFound();
+
+            List<ApiUser> users = await _context.Users
+                .Where(u => session.Users.Contains(u))
                 .ToListAsync();
 
             return users.ToUserDTOList();

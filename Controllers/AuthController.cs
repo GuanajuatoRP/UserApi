@@ -82,7 +82,7 @@ namespace UserApi.Controllers
             Stage? stage = await _context.Stage.FirstOrDefaultAsync(s => s.Name == StageName.NA);
             ApiUser user = new ApiUser
             {
-                UserName = $"{dto.Prenom}{dto.Nom}",
+                UserName = $"{dto.Prenom}_{dto.Nom}",
                 Email = dto.DiscordId,
                 EmailConfirmed = false,
                 Prenom = dto.Prenom,
