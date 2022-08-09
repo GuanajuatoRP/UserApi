@@ -87,7 +87,7 @@ namespace UserApi.Controllers
         /// <response code="404">Session not found</response>
         /// <returns>Model sessions</returns>
         [HttpGet]
-        [Route("{id}/!users")]
+        [Route("{id}/nusers")]
         public async Task<ActionResult<List<UserDTO>>> getUserAreNotInSessions([FromRoute] Guid id)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
