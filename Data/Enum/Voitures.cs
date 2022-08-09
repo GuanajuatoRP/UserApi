@@ -1,0 +1,73 @@
+﻿namespace UserApi.Data.Enum
+{
+
+    public enum Aspiration
+    {
+        Turbocharged,
+        Quad_Turbocharged,
+        Twin_Turbocharged,
+        Atomic,
+        Twin_Charged,
+        Electric,
+        Supercharged,
+        Naturally_Aspirated,
+        Twin_Screw_Supercharged,
+        Hybrid
+    }
+    public enum Class
+    {
+        D,
+        C,
+        B,
+        A,
+        S1,
+        S2,
+        X
+    }
+    public enum CarType
+    {
+        Pickups_4x4s,
+        Modern_Sports_Cars,
+        Modern_Supercars,
+        Buggies,
+        Rare_Classics,
+        Trucks,
+        Offroad,
+        Classic_Muscle,
+        Retro_Muscle,
+        Track_Toys,
+        Retro_Sports_Cars,
+        Classic_Sports_Cars,
+        Hypercars,
+        GT_Cars,
+        Modern_Muscle,
+        UTVs,
+        Rods_And_Customs,
+        Hot_Hatch,
+        Unlimited_Offroad,
+        Classic_Racers,
+        Rally_Monsters,
+        Extreme_Track_Toys,
+        Retro_Super_Cars,
+        Unlimited_Buggies,
+        Retro_Hot_Hatch,
+        Super_GT,
+        Vintage_Racers,
+        Super_Hot_Hatch,
+        Modern_Rally,
+        Sports_Utility_Heroes,
+        Super_Saloons,
+        Drift_Cars,
+        Cult_Cars,
+        Classic_Rally,
+        Retro_Saloons,
+        Retro_Rally,
+        Vans_Utility
+    }
+    public enum EnginePosition
+    {
+        Rear_Engine,
+        Mid_Engine,
+        Front_Engine
+    }
+}
