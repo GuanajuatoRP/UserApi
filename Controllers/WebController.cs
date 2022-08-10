@@ -29,7 +29,9 @@ namespace UserApi.Controllers
         {
             List<CarouselDTO> srcList = new List<CarouselDTO>
             {
-                new CarouselDTO{src = 
+                new CarouselDTO{src =
+                "testeuu"
+                },new CarouselDTO{src =
                 "https://cdn.discordapp.com/attachments/729809533756506213/984520139494015016/C0411CFB-ACBC-4268-B71D-309DA251751C.jpg"
                 },new CarouselDTO{src =
                 "https://cdn.discordapp.com/attachments/729809533756506213/984520138906804224/C58BA225-A3E9-4A4C-B350-F13E43A61795.jpg"
