@@ -30,7 +30,7 @@ namespace UserApi.Controllers
             List<CarouselDTO> srcList = new List<CarouselDTO>
             {
                 new CarouselDTO{src =
-                "testeuu"
+                "guanajuato-roleplay"
                 },new CarouselDTO{src =
                 "https://cdn.discordapp.com/attachments/729809533756506213/984520139494015016/C0411CFB-ACBC-4268-B71D-309DA251751C.jpg"
                 },new CarouselDTO{src =
