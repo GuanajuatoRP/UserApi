@@ -107,12 +107,16 @@ namespace UserApi.Controllers
             registrationToken = HttpUtility.UrlEncode(registrationToken);
 
             EmailConfirmationTokenDTO tokenDTO = new() { token = registrationToken };
+
             //discord valide token stp :D
-            var url = $"{apiToBotSettings.baseURI}sendRegisterValidationButton/{user.Email}";
+            //var url = $"{apiToBotSettings.baseURI}sendRegisterValidationButton/{user.Email}";
+            var url = $"http://bot.guanajuato-roleplay.fr/sendRegisterValidationButton/{user.Email}";
             HttpClient client = new();
             string json = JsonSerializer.Serialize(tokenDTO);
             StringContent data = new StringContent(json, Encoding.UTF8, "application/json");
-            await client.PostAsync(url, data);
+
+            HttpResponseMessage response = await client.PostAsync(url, data);
+
             return Ok("L'utilisateur a été crée et est en attente de validation");
         }
 
