@@ -2,6 +2,7 @@
 using System.Reflection;
 using UserApi.Data;
 using UserApi.Models.Web;
+using UserApi.Tools;
 
 namespace UserApi.Controllers
 {
@@ -30,8 +31,6 @@ namespace UserApi.Controllers
             List<CarouselDTO> srcList = new List<CarouselDTO>
             {
                 new CarouselDTO{src =
-                "guanajuato-roleplay"
-                },new CarouselDTO{src =
                 "https://cdn.discordapp.com/attachments/729809533756506213/984520139494015016/C0411CFB-ACBC-4268-B71D-309DA251751C.jpg"
                 },new CarouselDTO{src =
                 "https://cdn.discordapp.com/attachments/729809533756506213/984520138906804224/C58BA225-A3E9-4A4C-B350-F13E43A61795.jpg"
@@ -65,7 +64,7 @@ namespace UserApi.Controllers
                 "https://cdn.discordapp.com/attachments/729809533756506213/984520122041503834/C51761B9-5597-494E-9CB3-FF8634FD72A5.jpg"
                 }
             };
-
+            srcList.Shuffle();
             return srcList;
         }
 
