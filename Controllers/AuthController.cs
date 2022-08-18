@@ -86,7 +86,7 @@ namespace UserApi.Controllers
             {
                 UserName = $"{dto.Prenom}_{dto.Nom}",
                 Email = dto.DiscordId,
-                EmailConfirmed = false,
+                EmailConfirmed = true,
                 Prenom = dto.Prenom,
                 Nom = dto.Nom,
                 Sexe = dto.Sexe,
@@ -101,35 +101,13 @@ namespace UserApi.Controllers
             };
 
             IdentityResult? result = await userManager.CreateAsync(user, dto.Password);
-            if (result.Succeeded == false) return BadRequest(result.Errors); 
-
-
-
-            string registrationToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
-            registrationToken = HttpUtility.UrlEncode(registrationToken);
-
-            EmailConfirmationTokenDTO tokenDTO = new() { token = registrationToken };
-
-            //discord valide token stp :D
-            var url = $"{apiToBotSettings.baseURI}sendRegisterValidationButton/{user.Email}";
-            HttpClient client = new();
-            string json = JsonSerializer.Serialize(tokenDTO);
-            StringContent data = new StringContent(json, Encoding.UTF8, "application/json");
-
-            HttpRequestMessage httpRequestMessage = new HttpRequestMessage()
+            if (result.Succeeded)
             {
-                Method = HttpMethod.Post,
-                RequestUri = new Uri(url),
-                Content =  data,
-            };
-            httpRequestMessage.Headers.Add(HttpRequestHeader.ContentType.ToString(), "application/json");
+                await userManager.AddToRoleAsync(user, Roles.User);
+            }
+            else return BadRequest(result.Errors);
 
-            HttpResponseMessage response = await client.SendAsync(httpRequestMessage);
-            Console.WriteLine("\n\n\n");
-            Console.WriteLine(response);
-            Console.WriteLine("\n\n\n");
 
-            if (response.IsSuccessStatusCode == false) return BadRequest("Erreur lors de l'envoi du lien de confirmation");
 
             return Ok("L'utilisateur a été crée et est en attente de validation");
         }
