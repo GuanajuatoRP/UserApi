@@ -100,7 +100,7 @@ void AddCORS(WebApplicationBuilder builder)
     {
         o.AddDefaultPolicy(builder =>
         {
-            //builder.WithOrigins(originsAllowed.ToArray()).AllowAnyHeader().WithMethods("PUT", "GET","DELETE","POST","OPTIONS").Build();
+            //builder.WithOrigins(originsAllowed.ToArray()).AllowAnyHeader().WithMethods("PUT", "GET", "DELETE", "POST", "OPTIONS").Build();
             builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().Build();
         });
     });

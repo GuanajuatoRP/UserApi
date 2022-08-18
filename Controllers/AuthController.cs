@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
@@ -109,13 +111,25 @@ namespace UserApi.Controllers
             EmailConfirmationTokenDTO tokenDTO = new() { token = registrationToken };
 
             //discord valide token stp :D
-            //var url = $"{apiToBotSettings.baseURI}sendRegisterValidationButton/{user.Email}";
-            var url = $"http://bot.guanajuato-roleplay.fr/sendRegisterValidationButton/{user.Email}";
+            var url = $"{apiToBotSettings.baseURI}sendRegisterValidationButton/{user.Email}";
             HttpClient client = new();
             string json = JsonSerializer.Serialize(tokenDTO);
             StringContent data = new StringContent(json, Encoding.UTF8, "application/json");
 
-            HttpResponseMessage response = await client.PostAsync(url, data);
+            HttpRequestMessage httpRequestMessage = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri(url),
+                Content =  data,
+            };
+            httpRequestMessage.Headers.Add(HttpRequestHeader.ContentType.ToString(), "application/json");
+
+            HttpResponseMessage response = await client.SendAsync(httpRequestMessage);
+            Console.WriteLine("\n\n\n");
+            Console.WriteLine(response);
+            Console.WriteLine("\n\n\n");
+
+            if (response.IsSuccessStatusCode == false) return BadRequest("Erreur lors de l'envoi du lien de confirmation");
 
             return Ok("L'utilisateur a été crée et est en attente de validation");
         }
