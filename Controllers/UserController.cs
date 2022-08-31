@@ -115,10 +115,10 @@ namespace UserApi.Controllers
         [Route("{id}")]
         public async Task<IActionResult> EditCar([FromRoute] string id, [FromBody] UserDTO dto)
         {
-            if (id != dto.Id) return BadRequest("L'id est != de celui du dto");
+            if (id != dto.DiscordId) return BadRequest("L'id est != de celui du dto");
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            ApiUser entity = await _userContext.Users.FirstOrDefaultAsync(e => e.Id == id);
+            ApiUser entity = await _userContext.Users.FirstOrDefaultAsync(e => e.Email == id);
 
             if (entity == null) return BadRequest("Aucun user avec cet id");
 
