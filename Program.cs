@@ -172,7 +172,7 @@ void AddItentity(WebApplicationBuilder builder)
         options.Password.RequireLowercase = true;
         options.Password.RequireUppercase = true;
         options.Password.RequireNonAlphanumeric = true;
-        options.Password.RequiredLength = 10;
+        options.Password.RequiredLength = 8;
         options.Password.RequiredUniqueChars = 4; //Determine le nombre de caract�re unnique minimum requis
 
 
