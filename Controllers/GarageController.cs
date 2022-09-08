@@ -160,30 +160,21 @@ namespace UserApi.Controllers
             if (entity == null) return BadRequest("Aucune voiture avec cette id");
 
 
-            entity.PowerBHP = dto.PowerBHP;
-            entity.PowerKW = dto.PowerKW;
-            entity.TorqueLBFT = dto.TorqueLBFT;
-            entity.TorqueNM = dto.TorqueNM;
-            entity.WeightLBS = dto.WeightLBS;
-            entity.WeightKG = dto.WeightKG;
-            entity.Transmission = dto.Transmission;
-            entity.GearBox = dto.GearBox;
-            entity.WeightKG = dto.WeightKG;
-            entity.EngineDisplacement = dto.EngineDisplacement;
-            entity.NbCylindre = dto.NbCylindre;
-            entity.EnginePosition = (EnginePosition)Enum.Parse(typeof(EnginePosition), dto.EnginePosition);
-            entity.PrixTotal += dto.PrixModif;
-            entity.PrixModif += dto.PrixModif;
-            entity.Aspiration = (Aspiration)Enum.Parse(typeof(Aspiration), dto.Aspiration);
+            entity.PowerHp = dto.PowerHp;
+            entity.WeightKG = dto.WeightKg;
+            entity.DriveTrain = (DriveTrain)Enum.Parse(typeof(DriveTrain), dto.DriveTrain); ;
+            entity.Class = (Class)Enum.Parse(typeof(Class), dto.Class);
+            entity.Pi = dto.Pi;
+            entity.OnRoad = dto.OnRoad;
             entity.Speed = dto.Speed;
             entity.Handling = dto.Handling;
             entity.Accelerate = dto.Accelerate;
             entity.Launch = dto.Launch;
             entity.Braking = dto.Braking;
             entity.Offroad = dto.Offroad;
-            entity.Pi = dto.Pi;
-            entity.Class = (Class)Enum.Parse(typeof(Class), dto.Class);
             entity.Imatriculation = dto.Imatriculation ?? String.Empty;
+            entity.PrixTotal = dto.TotalPrice;
+            entity.PrixModif = dto.EditPrice ?? 0;
 
 
             try

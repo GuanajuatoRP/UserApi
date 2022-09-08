@@ -425,7 +425,7 @@ namespace UserApi.Migrations
                         .HasColumnType("decimal(8,2)")
                         .HasColumnName("PowerBHP");
 
-                    b.Property<decimal>("PowerKw")
+                    b.Property<decimal>("PowerHp")
                         .HasColumnType("decimal(8,2)")
                         .HasColumnName("PowerKW");
 

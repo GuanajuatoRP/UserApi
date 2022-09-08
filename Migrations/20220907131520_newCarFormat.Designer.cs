@@ -12,8 +12,8 @@ using UserApi.Data;
 namespace UserApi.Migrations
 {
     [DbContext(typeof(UserApiContext))]
-    [Migration("20220725165958_addCat")]
-    partial class addCat
+    [Migration("20220907131520_newCarFormat")]
+    partial class newCarFormat
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -352,11 +352,6 @@ namespace UserApi.Migrations
                     b.Property<decimal>("Accelerate")
                         .HasColumnType("decimal(8,2)");
 
-                    b.Property<string>("Aspiration")
-                        .IsRequired()
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(max)");
-
                     b.Property<string>("Aviability")
                         .IsRequired()
                         .IsUnicode(false)
@@ -376,21 +371,10 @@ namespace UserApi.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(max)");
 
-                    b.Property<string>("EngineConfiguration")
+                    b.Property<string>("DriveTrain")
                         .IsRequired()
                         .IsUnicode(false)
                         .HasColumnType("varchar(max)");
-
-                    b.Property<decimal>("EngineDisplacement")
-                        .HasColumnType("decimal(8,2)");
-
-                    b.Property<string>("EnginePosition")
-                        .IsRequired()
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(max)");
-
-                    b.Property<int>("GearBox")
-                        .HasColumnType("int");
 
                     b.Property<decimal>("Handling")
                         .HasColumnType("decimal(8,2)");
@@ -407,27 +391,24 @@ namespace UserApi.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(max)");
 
-                    b.Property<int>("NbCylindre")
-                        .HasColumnType("int");
-
                     b.Property<decimal>("Offroad")
                         .HasColumnType("decimal(8,2)");
+
+                    b.Property<bool>("OnRoad")
+                        .HasColumnType("bit");
 
                     b.Property<int>("Pi")
                         .HasColumnType("int")
                         .HasColumnName("PI");
 
                     b.Property<string>("PictureLink")
+                        .IsRequired()
                         .IsUnicode(false)
                         .HasColumnType("varchar(max)");
 
-                    b.Property<decimal>("PowerBhp")
-                        .HasColumnType("decimal(8,2)")
-                        .HasColumnName("PowerBHP");
-
-                    b.Property<decimal>("PowerHp")
-                        .HasColumnType("decimal(8,2)")
-                        .HasColumnName("PowerKW");
+                    b.Property<int>("PowerHp")
+                        .HasColumnType("int")
+                        .HasColumnName("PowerHp");
 
                     b.Property<int>("Price")
                         .HasColumnType("int");
@@ -437,26 +418,13 @@ namespace UserApi.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(max)");
 
-                    b.Property<string>("RequiredDlc")
-                        .IsRequired()
+                    b.Property<bool>("RequiredDlc")
                         .IsUnicode(false)
-                        .HasColumnType("varchar(max)")
+                        .HasColumnType("bit")
                         .HasColumnName("RequiredDLC");
 
                     b.Property<decimal>("Speed")
                         .HasColumnType("decimal(8,2)");
-
-                    b.Property<decimal>("TorqueLbft")
-                        .HasColumnType("decimal(8,2)")
-                        .HasColumnName("TorqueLBFT");
-
-                    b.Property<decimal>("TorqueNm")
-                        .HasColumnType("decimal(8,2)")
-                        .HasColumnName("TorqueNM");
-
-                    b.Property<string>("Transmission")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Type")
                         .IsRequired()
@@ -466,10 +434,6 @@ namespace UserApi.Migrations
                     b.Property<decimal>("WeightKg")
                         .HasColumnType("decimal(8,2)")
                         .HasColumnName("WeightKG");
-
-                    b.Property<decimal>("WeightLbs")
-                        .HasColumnType("decimal(8,2)")
-                        .HasColumnName("WeightLBS");
 
                     b.Property<string>("WikiLink")
                         .IsRequired()
@@ -548,28 +512,21 @@ namespace UserApi.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Accelerate")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("Aspiration")
-                        .HasColumnType("int");
+                        .HasColumnType("decimal(8,2)");
 
                     b.Property<decimal>("Braking")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(8,2)");
 
                     b.Property<int>("Class")
+                        .IsUnicode(false)
                         .HasColumnType("int");
 
-                    b.Property<decimal>("EngineDisplacement")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("EnginePosition")
-                        .HasColumnType("int");
-
-                    b.Property<int>("GearBox")
+                    b.Property<int>("DriveTrain")
+                        .IsUnicode(false)
                         .HasColumnType("int");
 
                     b.Property<decimal>("Handling")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(8,2)");
 
                     b.Property<Guid>("IdCar")
                         .HasColumnType("uniqueidentifier");
@@ -583,21 +540,19 @@ namespace UserApi.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Launch")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("NbCylindre")
-                        .HasColumnType("int");
+                        .HasColumnType("decimal(8,2)");
 
                     b.Property<decimal>("Offroad")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(8,2)");
+
+                    b.Property<bool>("OnRoad")
+                        .HasColumnType("bit");
 
                     b.Property<int>("Pi")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("PI");
 
-                    b.Property<int>("PowerBHP")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PowerKW")
+                    b.Property<int>("PowerHp")
                         .HasColumnType("int");
 
                     b.Property<int>("PrixModif")
@@ -607,29 +562,16 @@ namespace UserApi.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("Speed")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(8,2)");
 
-                    b.Property<int>("TorqueLBFT")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TorqueNM")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Transmission")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("WeightKG")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WeightLBS")
-                        .HasColumnType("int");
+                    b.Property<decimal>("WeightKG")
+                        .HasColumnType("decimal(8,2)");
 
                     b.HasKey("KeyCar");
 
                     b.HasIndex("IdUser");
 
-                    b.ToTable("Voitures");
+                    b.ToTable("Voitures", (string)null);
                 });
 
             modelBuilder.Entity("ApiUserSessions", b =>

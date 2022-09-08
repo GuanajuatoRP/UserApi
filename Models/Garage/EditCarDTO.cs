@@ -8,33 +8,17 @@ namespace UserApi.Models.Garage
         [Required]
         public Guid? KeyCar { get; set; }
         [Required]
-        public int PowerBHP { get; set; }
+        public int PowerHp { get; set; }
         [Required]
-        public int PowerKW { get; set; }
+        public decimal WeightKg { get; set; }
         [Required]
-        public int TorqueLBFT { get; set; }
+        public string DriveTrain { get; set; }
         [Required]
-        public int TorqueNM { get; set; }
+        public string Class { get; set; }
         [Required]
-        public int WeightLBS { get; set; }
+        public int Pi { get; set; }
         [Required]
-        public string Transmission { get; set; }
-        [Required]
-        public int GearBox { get; set; }
-        [Required]
-        public int WeightKG { get; set; }
-        [Required]
-        public decimal EngineDisplacement { get; set; }
-        [Required]
-        public int NbCylindre { get; set; }
-        [Required]
-        public string EnginePosition { get; set; }
-        [Required]
-        public int PrixTotal { get; set; }
-        [Required]
-        public int PrixModif { get; set; }
-        [Required]
-        public string Aspiration { get; set; }
+        public bool OnRoad { get; set; }
         [Required]
         public decimal Speed { get; set; }
         [Required]
@@ -47,11 +31,10 @@ namespace UserApi.Models.Garage
         public decimal Braking { get; set; }
         [Required]
         public decimal Offroad { get; set; }
+        public string? Imatriculation { get; set; }
         [Required]
-        public int Pi { get; set; }
+        public int TotalPrice { get; set; }
         [Required]
-        public string Class { get; set; }
-        //[Required]
-        public string Imatriculation { get; set; }
+        public int? EditPrice { get; set; }
     }
 }

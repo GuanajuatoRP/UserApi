@@ -99,6 +99,46 @@ namespace UserApi.Controllers
             return car.ToModel();
 
         }
+
+
+
+        [HttpPost]
+        [Route("addOriginalCar")]
+        public async Task<IActionResult> addOriginalCar([FromBody] IEnumerable<CreateOriginalCarDTO> dtos)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            foreach (CreateOriginalCarDTO dto in dtos)
+            {
+                OriginalCar? originalCar = await _userContext.OriginalCars
+                 .FirstOrDefaultAsync(oc => oc.CarOrdinal == dto.CarOrdinal);
+
+                if (originalCar != null) Console.WriteLine($"La voiture {dto.Maker}, {dto.Model}, {dto.Year}, {dto.CarOrdinal} existe déja");
+                else 
+                {
+                    Maker? maker = await _userContext.Makers.FirstOrDefaultAsync(m => m.Name == dto.Maker);
+
+                    if (maker == null) return BadRequest($"Maker {dto.Maker} not found");
+                    else
+                    {
+                            originalCar = dto.ToEntity(maker);
+                        try
+                        {
+                            _userContext.OriginalCars.Add(originalCar);
+                            await _userContext.SaveChangesAsync();
+                        }
+                        catch (Exception e)
+                        {
+                            return BadRequest($"fail : {e.Message}");
+                            throw;
+                        }
+                    }
+                }               
+            }
+
+
+            return Ok();
+        }
     }
     public record OriginalCarSearchModel(string? marque, string? pays, string? type, string? modele);
 }

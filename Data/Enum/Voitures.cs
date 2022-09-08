@@ -1,19 +1,5 @@
 ﻿namespace UserApi.Data.Enum
 {
-
-    public enum Aspiration
-    {
-        Turbocharged,
-        Quad_Turbocharged,
-        Twin_Turbocharged,
-        Atomic,
-        Twin_Charged,
-        Electric,
-        Supercharged,
-        Naturally_Aspirated,
-        Twin_Screw_Supercharged,
-        Hybrid
-    }
     public enum Class
     {
         D,
@@ -64,10 +50,10 @@
         Retro_Rally,
         Vans_Utility
     }
-    public enum EnginePosition
+    public enum DriveTrain
     {
-        Rear_Engine,
-        Mid_Engine,
-        Front_Engine
+        AWD,
+        RWD,
+        FWD
     }
 }

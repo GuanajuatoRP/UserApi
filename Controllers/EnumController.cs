@@ -55,16 +55,6 @@ namespace UserApi.Controllers
                 .Select(p => new EnumvalDTO { Index = (int)p, Name = p.ToString() }).ToList();
         }
 
-        /// <summary>
-        /// Liste des type d'aspiration (Turbo)
-        /// </summary>
-        [HttpGet]
-        [Route("Aspiration")]
-        public async Task<ActionResult<List<EnumvalDTO>>> GetAspiration()
-        {
-            return Enum.GetValues(typeof(Aspiration)).Cast<Aspiration>()
-                .Select(p => new EnumvalDTO { Index = (int)p, Name = p.ToString() }).ToList();
-        }
 
         /// <summary>
         /// Liste des class de voiture
@@ -89,14 +79,15 @@ namespace UserApi.Controllers
         }
 
         /// <summary>
+        /// Liste des transmission de voiture
         /// </summary>
-        /// <returns></returns>
         [HttpGet]
-        [Route("EnginePosition")]
-        public async Task<ActionResult<List<EnumvalDTO>>> GetEnginePosition()
+        [Route("Transmission")]
+        public async Task<ActionResult<List<EnumvalDTO>>> GetTransmission()
         {
-            return Enum.GetValues(typeof(EnginePosition)).Cast<EnginePosition>()
+            return Enum.GetValues(typeof(DriveTrain)).Cast<DriveTrain>()
                 .Select(p => new EnumvalDTO { Index = (int)p, Name = p.ToString() }).ToList();
         }
+
     }
 }

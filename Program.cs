@@ -35,13 +35,14 @@ var builder = WebApplication.CreateBuilder(args);
     {
         var API_NAME = Assembly.GetExecutingAssembly().GetName().Name;
         var xmlPath = $"{AppContext.BaseDirectory}{API_NAME}.xml";
-
+        
         c.SwaggerDoc("v1", new OpenApiInfo
         {
             Version = "v1",
             Title = API_NAME,
             Description = "API for Guanajuato R�lePlay"
         });
+        
         c.IncludeXmlComments(xmlPath);
         c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
         {
