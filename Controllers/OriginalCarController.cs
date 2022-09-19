@@ -40,6 +40,18 @@ namespace UserApi.Controllers
             return originalCars.Select(c => c.ToModel()).ToList();
         }
 
+        [HttpGet("SearchDiscord")]
+        public async Task<ActionResult<IEnumerable<OriginalCarDTO>>> SearchDiscord([FromQuery] string? searchModel)
+        {
+            var seachTerms = searchModel?.Split(' ');
+            List<OriginalCar> originalCars = await _userContext.OriginalCars
+                .Include(c => c.Maker)
+                .Where(c => seachTerms.All(s => $"{c.Maker.Name} {c.Model} {c.Year} ({c.Class}-{c.Pi})".Contains(s, StringComparison.OrdinalIgnoreCase)))
+                .ToListAsync();
+
+            return originalCars.Select(c => c.ToModel()).ToList();
+        }
+
         /// <summary>
         /// Get toute les voiture d'origine
         /// </summary>
