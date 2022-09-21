@@ -41,13 +41,27 @@ namespace UserApi.Controllers
         }
 
         [HttpGet("SearchDiscord")]
-        public async Task<ActionResult<IEnumerable<OriginalCarDTO>>> SearchDiscord([FromQuery] string? searchModel)
+        public async Task<ActionResult<IEnumerable<OriginalCarDTO>>> SearchDiscord([FromQuery] string? searchModel, [FromQuery] int limit = 25)
         {
-            var seachTerms = searchModel?.Split(' ');
-            List<OriginalCar> originalCars = await _userContext.OriginalCars
+            if (searchModel == null) return Ok(new List<OriginalCarDTO>());
+            
+            var seachTerms = searchModel?.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            var query = _userContext.OriginalCars
                 .Include(c => c.Maker)
-                .Where(c => seachTerms.All(s => $"{c.Maker.Name} {c.Model} {c.Year} ({c.Class}-{c.Pi})".Contains(s, StringComparison.OrdinalIgnoreCase)))
-                .ToListAsync();
+                .Where(c => c.OnRoad);
+
+            foreach (var searchValue in seachTerms)
+            {
+                var searchValue2 = searchValue.Trim('(', ')');
+                query = query.Where(c => c.Maker.Name.Contains(searchValue2) ||
+                c.Model.Contains(searchValue2) ||
+                c.Year.ToString().Contains(searchValue2) ||
+                c.Class.Contains(searchValue2) ||
+                c.Pi.ToString().Contains(searchValue2));
+            }
+
+            var originalCars = await query.Take(limit).ToListAsync();
+
 
             return originalCars.Select(c => c.ToModel()).ToList();
         }
