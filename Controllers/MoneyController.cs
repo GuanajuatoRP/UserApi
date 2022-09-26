@@ -70,7 +70,7 @@ namespace UserApi.Controllers
         /// <response code="200">Model Argent user</response>
         [HttpPost]
         [Route("remove/{DiscordId}")]
-        public async Task<IActionResult> RemoveMoney([FromRoute] string DiscordId, [FromBody] ChangeAmountDTO dto)
+        public async Task<IActionResult> RemoveMoney([FromRoute] string DiscordId, [FromBody] ChangeAmountDTO dto, [FromQuery] bool force = false)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
@@ -79,7 +79,10 @@ namespace UserApi.Controllers
 
             entity.Argent -= dto.Value;
 
+            if (entity.Argent < 0 && !force) return BadRequest("L'utilisateur n'a pas assez d'argent");
+
             IdentityResult result = await userManager.UpdateAsync(entity);
+
             if (result.Succeeded) return Ok(entity.ToMoneyDto());
             else return BadRequest(result.Errors);
         }
