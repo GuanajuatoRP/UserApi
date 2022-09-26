@@ -38,7 +38,7 @@ namespace UserApi.Controllers
             ApiUser? user = await _context.Users
                 .Include(u => u.Stage)
                 .FirstOrDefaultAsync(u => u.Email == DiscordId);
-            if (user == null) return BadRequest("Aucun utilisateur existe avec cet Id");
+            if (user == null) return BadRequest("USER_NOT_FOUND");
 
 
             return user.ToPermisDto();
@@ -58,7 +58,7 @@ namespace UserApi.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             ApiUser? entity = await userManager.FindByEmailAsync(DiscordId);
-            if (entity == null) return BadRequest("Aucun utilisateur existe avec cet Id");
+            if (entity == null) return BadRequest("USER_NOT_FOUND");
 
             //Max 12 pts
             if (entity.Points + dto.Value > 12 ) entity.Points = 12;
@@ -83,7 +83,7 @@ namespace UserApi.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             ApiUser? entity = await userManager.FindByEmailAsync(DiscordId);
-            if (entity == null) return BadRequest("Aucun utilisateur existe avec cet Id");
+            if (entity == null) return BadRequest("USER_NOT_FOUND");
 
             //if 0 pts pas de retrait possible
 
@@ -115,7 +115,7 @@ namespace UserApi.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             ApiUser? entity = await userManager.FindByEmailAsync(DiscordId);
-            if (entity == null) return BadRequest("Aucun utilisateur existe avec cet Id");
+            if (entity == null) return BadRequest("USER_NOT_FOUND");
 
             if (dto.Value < 0 || dto.Value > 12) return BadRequest("Nombres de points invalide");
 
@@ -140,7 +140,7 @@ namespace UserApi.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             ApiUser? entity = await userManager.FindByEmailAsync(DiscordId);
-            if (entity == null) return BadRequest("Aucun utilisateur existe avec cet Id");
+            if (entity == null) return BadRequest("USER_NOT_FOUND");
             
             if (dto.Points < 0 || dto.Points > 12) return BadRequest("Nombres de points invalide");
             
@@ -166,7 +166,7 @@ namespace UserApi.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             ApiUser? entity = await userManager.FindByEmailAsync(DiscordId);
-            if (entity == null) return BadRequest("Aucun utilisateur existe avec cet Id");
+            if (entity == null) return BadRequest("USER_NOT_FOUND");
 
             //Get length of enum and remove one 
             int enumLen = Enum.GetValues(typeof(PermisName)).Length -1;
@@ -206,7 +206,7 @@ namespace UserApi.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             ApiUser? entity = await userManager.FindByEmailAsync(DiscordId);
-            if (entity == null) return BadRequest("Aucun utilisateur existe avec cet Id");
+            if (entity == null) return BadRequest("USER_NOT_FOUND");
 
 
             entity.Permis = PermisName.Retrait;
@@ -234,7 +234,7 @@ namespace UserApi.Controllers
             ApiUser? entity = await _context.Users
                 .Include(u => u.Stage)
                 .FirstOrDefaultAsync(u => u.Email == DiscordId);
-            if (entity == null) return BadRequest("Aucun utilisateur existe avec cet Id");
+            if (entity == null) return BadRequest("USER_NOT_FOUND");
 
             //Get length of enum and remove one 
             int enumLen = Enum.GetValues(typeof(StageName)).Length -1;
@@ -271,7 +271,7 @@ namespace UserApi.Controllers
             ApiUser? entity = await _context.Users
                 .Include(u => u.Stage)
                 .FirstOrDefaultAsync(u => u.Email == DiscordId);
-            if (entity == null) return BadRequest("Aucun utilisateur existe avec cet Id");
+            if (entity == null) return BadRequest("USER_NOT_FOUND");
 
             if (entity.Stage.Name == StageName.NA) return BadRequest("Il ny a plus de stage a remove ici :(");
 

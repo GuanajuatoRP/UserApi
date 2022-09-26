@@ -33,7 +33,7 @@ namespace UserApi.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             ApiUser? user = await userManager.FindByEmailAsync(DiscordId);
-            if (user == null) return BadRequest("Aucun utilisateur existe avec cet Id");
+            if (user == null) return BadRequest("USER_NOT_FOUND");
 
             return user.ToMoneyDto();
         }
@@ -52,7 +52,7 @@ namespace UserApi.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             ApiUser? entity = await userManager.FindByEmailAsync(DiscordId);
-            if (entity == null) return BadRequest("Aucun utilisateur existe avec cet Id");
+            if (entity == null) return BadRequest("USER_NOT_FOUND");
 
             entity.Argent += dto.Value;
 
@@ -75,11 +75,11 @@ namespace UserApi.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             ApiUser? entity = await userManager.FindByEmailAsync(DiscordId);
-            if (entity == null) return BadRequest("Aucun utilisateur existe avec cet Id");
+            if (entity == null) return BadRequest("USER_NOT_FOUND");
 
             entity.Argent -= dto.Value;
 
-            if (entity.Argent < 0 && !force) return BadRequest("L'utilisateur n'a pas assez d'argent");
+            if (entity.Argent < 0 && !force) return BadRequest("NOT_ENOUGH_MONEY");
 
             IdentityResult result = await userManager.UpdateAsync(entity);
 
@@ -101,7 +101,7 @@ namespace UserApi.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             ApiUser? entity = await userManager.FindByEmailAsync(DiscordId);
-            if (entity == null) return BadRequest("Aucun utilisateur existe avec cet Id");
+            if (entity == null) return BadRequest("USER_NOT_FOUND");
 
             entity.Argent = dto.Value;
 

@@ -40,7 +40,7 @@ namespace UserApi.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             ApiUser? user = await userManager.FindByEmailAsync(DiscordId);
-            if (user == null) return BadRequest("Aucun utilisateur existe avec cet Id");
+            if (user == null) return BadRequest("USER_NOT_FOUND");
 
             OriginalCar? originalCar = await _userContext.OriginalCars
                 .FirstOrDefaultAsync(oc => oc.IdCar == CarId);
@@ -122,7 +122,7 @@ namespace UserApi.Controllers
             ApiUser? user = await _userContext.Users
                 .Include(u => u.Voitures)
                 .FirstOrDefaultAsync(u => u.Email == DiscordId);
-            if (user == null) return BadRequest("Aucun utilisateur existe avec cet id");
+            if (user == null) return BadRequest("USER_NOT_FOUND");
 
             List<CarDTO> carDto = new List<CarDTO>();
 

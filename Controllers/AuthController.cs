@@ -311,7 +311,7 @@ namespace UserApi.Controllers
              if (!ModelState.IsValid) return BadRequest(ModelState);
 
              ApiUser? user = await userManager.FindByEmailAsync(dto.DiscordId);
-             if (user == null || !(await userManager.IsEmailConfirmedAsync(user))) return BadRequest("Aucun utilisateur existe avec cet id");
+             if (user == null || !(await userManager.IsEmailConfirmedAsync(user))) return BadRequest("USER_NOT_FOUND");
 
              string? token = await userManager.GeneratePasswordResetTokenAsync(user);
              return Ok(token);
@@ -330,7 +330,7 @@ namespace UserApi.Controllers
              if (!ModelState.IsValid) return BadRequest(ModelState);
 
              ApiUser? user = await userManager.FindByEmailAsync(dto.DiscordId);
-             if (user == null) return BadRequest("Aucun utilisateur existe avec cet id");
+             if (user == null) return BadRequest("USER_NOT_FOUND");
 
              IdentityResult? result = await userManager.ResetPasswordAsync(user, dto.Token, dto.Password);
              if (!result.Succeeded) return BadRequest(result.Errors);
