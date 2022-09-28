@@ -12,10 +12,6 @@ namespace UserApi.Mapper
                 IdMaker = maker.IdMaker,
                 Name = maker.Name,
                 Origin = maker.Origin,
-                Founded = maker.Founded,
-                Description = maker.Description,
-                Related = maker.Related,
-                WikiLink = maker.WikiLink
             };
         }
 
@@ -26,10 +22,6 @@ namespace UserApi.Mapper
                 IdMaker = maker.IdMaker,
                 Name = maker.Name,
                 Origin = maker.Origin,
-                Founded = maker.Founded,
-                Description = maker.Description,
-                Related = maker.Related,
-                WikiLink = maker.WikiLink,
                 Cars = maker.Cars.Select(c => c.ToModel()).ToList(),
             };
         }

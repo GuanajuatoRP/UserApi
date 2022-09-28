@@ -114,21 +114,11 @@ namespace UserApi.Data
                     .HasColumnName("Id_Maker")
                     .HasDefaultValueSql("(newid())");
 
-                m.Property(e => e.Description).HasColumnType("text");
-
                 m.Property(e => e.Name)
                     .HasMaxLength(255)
                     .IsUnicode(false);
 
                 m.Property(e => e.Origin)
-                    .HasMaxLength(255)
-                    .IsUnicode(false);
-
-                m.Property(e => e.Related)
-                    .HasMaxLength(255)
-                    .IsUnicode(false);
-
-                m.Property(e => e.WikiLink)
                     .HasMaxLength(255)
                     .IsUnicode(false);
             });
