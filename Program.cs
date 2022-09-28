@@ -81,6 +81,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(options =>
     {
         options.InjectStylesheet("/swagger-ui/SwaggerDark.css"); //Get Swagger in dark mode
+        options.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
     });
 }
 
