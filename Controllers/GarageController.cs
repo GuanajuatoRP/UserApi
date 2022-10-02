@@ -206,5 +206,34 @@ namespace UserApi.Controllers
 
             return NoContent();
         }
+
+        /// <summary>
+        /// Vend une voiture par son id
+        /// </summary>
+        /// <param name="KeyCar">Clé de la voiture a supprimer</param>
+        /// <response code="204">La voiture a été vendue</response>
+        /// <response code="404">La voiture n'existe pas</response>
+        [HttpPut("Sell/{DiscordId}/{KeyCar}")]
+        public async Task<IActionResult> SellCar([FromRoute] string DiscordId, [FromRoute] Guid KeyCar)
+        {
+            Voitures? car = await _userContext.Voitures
+                .Include(c => c.User)
+                .FirstOrDefaultAsync(v => v.KeyCar == KeyCar);
+            ApiUser? user = await userManager.FindByEmailAsync(DiscordId);
+
+            if (car == null) return NotFound($"Aucune voiture trouvée avec l'id suivant {KeyCar}");
+            if (user == null) return NotFound($"Aucun utilisateur trouvée avec l'id suivant {DiscordId}");
+            if (user.Id != car.IdUser) return NotFound($"La voiture n'apartiens pas a cet utilisateur");
+
+            int carPrice = car.PrixModif;
+            user.Argent += (int)Math.Round(carPrice * 0.75);
+
+            
+
+            _userContext.Voitures.Remove(car);
+            await _userContext.SaveChangesAsync();
+
+            return Ok(user.Argent);
+        }
     }
 }
