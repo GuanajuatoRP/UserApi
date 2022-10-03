@@ -225,7 +225,7 @@ namespace UserApi.Controllers
             if (user == null) return NotFound($"Aucun utilisateur trouvée avec l'id suivant {DiscordId}");
             if (user.Id != car.IdUser) return NotFound($"La voiture n'apartiens pas a cet utilisateur");
 
-            int carPrice = car.PrixModif;
+            int carPrice = car.PrixTotal;
             user.Argent += (int)Math.Round(carPrice * 0.75);
 
             
