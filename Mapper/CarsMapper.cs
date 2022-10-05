@@ -11,7 +11,6 @@ namespace UserApi.Mapper
             return new OriginalCarDTO
             {
                 IdCar = car.IdCar,
-                CarId = car.CarId,
                 CarOrdinal = car.CarOrdinal,
                 Maker = car.Maker.Name,
                 Model = car.Model,
@@ -44,7 +43,6 @@ namespace UserApi.Mapper
             return new OriginalCar
             {
                 IdCar = car.IdCar,
-                CarId = car.CarId,
                 CarOrdinal = car.CarOrdinal,
                 Maker = maker,
                 Model = car.Model,
@@ -75,7 +73,6 @@ namespace UserApi.Mapper
         {
             return new OriginalCar
             {
-                CarId = car.CarId,
                 CarOrdinal = car.CarOrdinal,
                 Maker = maker,
                 Model = car.Model,

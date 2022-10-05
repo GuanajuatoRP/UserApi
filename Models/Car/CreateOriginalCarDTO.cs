@@ -5,8 +5,6 @@ namespace UserApi.Models.Car
     public class CreateOriginalCarDTO
     {
         [Required]
-        public int CarId { get; set; }
-        [Required]
         public int CarOrdinal { get; set; }
         [Required]
         public string Maker { get; set; }

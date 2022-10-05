@@ -9,7 +9,6 @@ namespace UserApi.Models.Garage
         public string IdUser { get; set; }
         public string? Username { get; set; }
         public Guid IdCar { get; set; }
-        public int CarId { get; set; }
         public int CarOrdinal { get; set; }
         public string Maker { get; set; }
         public string Model { get; set; }

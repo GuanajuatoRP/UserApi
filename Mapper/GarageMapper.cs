@@ -14,7 +14,6 @@ namespace UserApi.Mapper
                 IdUser = car.IdUser,
                 Username = car.User.UserName,
                 IdCar = car.IdCar,
-                CarId = originalCar.CarId,
                 CarOrdinal = originalCar.CarOrdinal,
                 Maker = originalCar.Maker,
                 Model = originalCar.Model,

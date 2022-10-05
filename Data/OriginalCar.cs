@@ -6,7 +6,6 @@ namespace UserApi.Data
     public partial class OriginalCar
     {
         public Guid IdCar { get; set; }
-        public int CarId { get; set; }
         public int CarOrdinal { get; set; }
         public Guid MakerId { get; set; }
         public virtual Maker Maker { get; set; }
