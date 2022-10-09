@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UserApi.Data;
 
@@ -11,9 +12,10 @@ using UserApi.Data;
 namespace UserApi.Migrations
 {
     [DbContext(typeof(UserApiContext))]
-    partial class UserApiContextModelSnapshot : ModelSnapshot
+    [Migration("20221008183820_RemoveCarId")]
+    partial class RemoveCarId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -195,6 +197,9 @@ namespace UserApi.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<Guid?>("IdStage")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
@@ -247,9 +252,6 @@ namespace UserApi.Migrations
                     b.Property<string>("Sexe")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Stage")
-                        .HasColumnType("int");
-
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
@@ -258,6 +260,8 @@ namespace UserApi.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("IdStage");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -459,6 +463,29 @@ namespace UserApi.Migrations
                     b.ToTable("Sessions");
                 });
 
+            modelBuilder.Entity("UserApi.Data.Stage", b =>
+                {
+                    b.Property<Guid>("StageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Name")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NbSessionsRequis")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PermisRequis")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StageRequis")
+                        .HasColumnType("int");
+
+                    b.HasKey("StageId");
+
+                    b.ToTable("Stage");
+                });
+
             modelBuilder.Entity("UserApi.Data.Voitures", b =>
                 {
                     b.Property<Guid>("KeyCar")
@@ -594,6 +621,16 @@ namespace UserApi.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("UserApi.Data.ApiUser", b =>
+                {
+                    b.HasOne("UserApi.Data.Stage", "Stage")
+                        .WithMany("Users")
+                        .HasForeignKey("IdStage")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Stage");
+                });
+
             modelBuilder.Entity("UserApi.Data.OriginalCar", b =>
                 {
                     b.HasOne("UserApi.Data.Maker", "Maker")
@@ -624,6 +661,11 @@ namespace UserApi.Migrations
             modelBuilder.Entity("UserApi.Data.Maker", b =>
                 {
                     b.Navigation("Cars");
+                });
+
+            modelBuilder.Entity("UserApi.Data.Stage", b =>
+                {
+                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }

@@ -14,7 +14,7 @@ namespace UserApi.Models.User
         public string CreatedAt { get; set; }
         public int Argent { get; set; }
         public string Permis { get; set; }
-        public StageDTO? Stage { get; set; }
+        public string Stage { get; set; }
         public int Points { get; set; }
         public int NbSessionsPermis { get; set; }
         public int NbSessionsPolice { get; set; }

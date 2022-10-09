@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using UserApi.Data;
+using UserApi.Data.Enum;
 using UserApi.Mapper;
 using UserApi.Models.Sessions;
 using UserApi.Models.User;
@@ -238,6 +239,13 @@ namespace UserApi.Controllers
                 {
                     session.Users.Add(user);
                     user.NbSessions++;
+                    user.NbSessionsPermis = user.NbSessionsPermis > 0 ? user.NbSessionsPermis-1 : user.NbSessionsPermis;
+                    if (user.Permis == PermisName.Probatoire && user.NbSessionsPermis == 0)
+                    {
+                        user.Permis = PermisName.Definitif;
+                        user.Points += 6;
+                        user.NbSessionsPermis = 5;
+                    }
                     session.NbParticipant++;
                 };
             }
@@ -288,7 +296,14 @@ namespace UserApi.Controllers
                 if (session.Users.Contains(user))
                 {
                     session.Users.Remove(user);
+
                     user.NbSessions--;
+                    if (user.Permis == PermisName.Definitif && user.NbSessionsPermis == 5)
+                    {
+                        user.Permis = PermisName.Probatoire;
+                        user.Points = 6;
+                        user.NbSessionsPermis = 1;
+                    } else user.NbSessions++;
                     session.NbParticipant--;
                 };
             }
@@ -337,6 +352,14 @@ namespace UserApi.Controllers
             if (!session.Users.Contains(user)) return BadRequest("L'utilisateur spécifier n'est pas présent dans la séssions");
             
             session.Users.Remove(user);
+
+            user.NbSessions--;
+            if (user.Permis == PermisName.Definitif && user.NbSessionsPermis == 5)
+            {
+                user.Permis = PermisName.Probatoire;
+                user.Points = 6;
+                user.NbSessionsPermis = 1;
+            }
             session.NbParticipant--;
 
 

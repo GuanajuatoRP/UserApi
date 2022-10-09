@@ -13,7 +13,7 @@ namespace UserApi.Mapper
                 Permis = user.Permis.ToString(),
                 Points = user.Points,
                 NbSessionsPermis = user.NbSessionsPermis,
-                Stage = user.Stage.Name.ToString(),
+                Stage = user.Stage.ToString(),
             };
         }
     }

@@ -36,7 +36,6 @@ namespace UserApi.Controllers
         public async Task<ActionResult<PermisDTO>> GetPermis([FromRoute] string DiscordId)
         {
             ApiUser? user = await _context.Users
-                .Include(u => u.Stage)
                 .FirstOrDefaultAsync(u => u.Email == DiscordId);
             if (user == null) return BadRequest("USER_NOT_FOUND");
 
@@ -232,23 +231,20 @@ namespace UserApi.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             ApiUser? entity = await _context.Users
-                .Include(u => u.Stage)
                 .FirstOrDefaultAsync(u => u.Email == DiscordId);
             if (entity == null) return BadRequest("USER_NOT_FOUND");
 
             //Get length of enum and remove one 
             int enumLen = Enum.GetValues(typeof(StageName)).Length -1;
+            
             //test if actual Stage of user is the last Stage
-            if ((int)entity.Stage.Name == enumLen) return BadRequest("Vous avez déjà le dernier stage");
+            if ((int)entity.Stage == enumLen) return BadRequest("Vous avez déjà le dernier stage");
 
             if (entity.Permis == PermisName.Retrait || entity.Permis == PermisName.NA)
                 return BadRequest("Vous n'avez pas le permis. Vous ne pouvez pas améliorer votre stage");
 
             //Get le stage n+1
-            Stage? stage = await _context.Stage.FirstOrDefaultAsync(s => s.Name == (StageName)((int)entity.Stage.Name + 1));
-            entity.NbSessionsPermis = stage.NbSessionsRequis;
-            entity.IdStage = stage.StageId;
-            entity.Stage = stage;
+            entity.Stage = (StageName)((int)entity.Stage + 1);
 
 
             IdentityResult result = await userManager.UpdateAsync(entity);
@@ -269,16 +265,12 @@ namespace UserApi.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             ApiUser? entity = await _context.Users
-                .Include(u => u.Stage)
                 .FirstOrDefaultAsync(u => u.Email == DiscordId);
             if (entity == null) return BadRequest("USER_NOT_FOUND");
 
-            if (entity.Stage.Name == StageName.NA) return BadRequest("Il ny a plus de stage a remove ici :(");
+            if (entity.Stage == StageName.NA) return BadRequest("Il ny a plus de stage a remove ici :(");
 
-            Stage? stage = await _context.Stage.FirstOrDefaultAsync(s => s.Name == (StageName)((int)entity.Stage.Name - 1));
-            entity.NbSessionsPermis = stage.NbSessionsRequis;
-            entity.IdStage = stage.StageId;
-            entity.Stage = stage;
+            entity.Stage = (StageName)((int)entity.Stage - 1);
 
 
             IdentityResult result = await userManager.UpdateAsync(entity);

@@ -44,7 +44,6 @@ namespace UserApi.Controllers
             ApiUser? user = await _userContext.Users
                 .Include(u => u.Voitures)
                 .Include(u => u.Sessions)
-                .Include(u => u.Stage)
                 .FirstOrDefaultAsync(u => u.Email == DiscordId);
 
             if (user == null) return BadRequest("Aucun utilisateur trouver avec ce discordId");
@@ -74,7 +73,6 @@ namespace UserApi.Controllers
             ApiUser? user = await _userContext.Users
                 .Include(u => u.Voitures)
                 .Include(u => u.Sessions)
-                .Include(u => u.Stage)
                 .FirstOrDefaultAsync(u => u.Email == DiscordId);
 
             if (user == null) return BadRequest("Aucun utilisateur trouver avec ce discordId");
@@ -96,7 +94,6 @@ namespace UserApi.Controllers
             List<ApiUser>? users = await _userContext.Users
                 .Include(u => u.Voitures)
                 .Include(u => u.Sessions)
-                .Include(u => u.Stage)
                 .ToListAsync();
 
 
@@ -125,6 +122,7 @@ namespace UserApi.Controllers
 
             entity.Argent = dto.Argent;
             entity.Permis = (PermisName)Enum.Parse(typeof(PermisName), dto.Permis);
+            entity.Stage = (StageName)Enum.Parse(typeof(StageName), dto.Stage);
             entity.Points = dto.Points;
             entity.NbSessionsPermis = dto.NbSessionsPermis;
             entity.NbSessionsPolice = dto.NbSessionsPolice;

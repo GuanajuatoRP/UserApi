@@ -27,19 +27,6 @@ namespace UserApi.Data
                 }
             }
             
-            ////Adding roles
-            //List<Stage> stages = StageInit.GetAllStages();
-
-            //foreach (var stage in stages)
-            //{
-            //    if (!await roleManager.RoleExistsAsync(role))
-            //    {
-            //        var resultAddRole = await roleManager.CreateAsync(new IdentityRole(role));
-            //        if (!resultAddRole.Succeeded)
-            //            throw new ApplicationException("Adding role '" + role + "' failed with error(s): " + resultAddRole.Errors);
-            //    }
-            //}
-
             //Adding Admin
             ApiUser admin = new ApiUser
             {
@@ -51,7 +38,7 @@ namespace UserApi.Data
                 Sexe = "Home",
                 CreatedAt = DateTime.Now,
                 Argent = 0,
-                Stage = new (),
+                Stage = StageName.NA,
                 Permis = PermisName.NA,
                 Points = 0,
                 NbSessions = 0,

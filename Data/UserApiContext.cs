@@ -13,7 +13,6 @@ namespace UserApi.Data
             Database.Migrate();
         }
         public DbSet<Voitures> Voitures { get; set; }
-        public DbSet<Stage> Stage { get; set; }
         public DbSet<Sessions> Sessions { get; set; }
         public DbSet<Markdown> Markdown { get; set; }
         public DbSet<OriginalCar> OriginalCars { get; set; } = null!;
@@ -27,7 +26,6 @@ namespace UserApi.Data
             builder.Entity<ApiUser>(u =>
             {
                 u.HasKey(u => u.Id);
-                u.HasOne(u => u.Stage).WithMany(s => s.Users).HasForeignKey(u => u.IdStage).OnDelete(DeleteBehavior.Restrict);
                 u.HasMany(u => u.Voitures).WithOne(v => v.User).HasForeignKey(v => v.IdUser).OnDelete(DeleteBehavior.Cascade);
                 u.HasMany(u => u.Sessions).WithMany(s => s.Users);
             });
@@ -38,11 +36,6 @@ namespace UserApi.Data
                 s.Property( s => s.SessionNumber).ValueGeneratedOnAdd();
             });
             
-            builder.Entity<Stage>(s =>
-            {
-                s.HasKey(s => s.StageId);
-            });
-
             builder.Entity<Voitures>(v =>
             {
                 v.ToTable("Voitures");

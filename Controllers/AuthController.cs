@@ -81,7 +81,6 @@ namespace UserApi.Controllers
             ApiUser userExists = await userManager.FindByNameAsync($"{dto.Prenom}{dto.Nom}");
             if (userExists != null) return BadRequest("L'utilisateur existe déjà");
 
-            Stage? stage = await _context.Stage.FirstOrDefaultAsync(s => s.Name == StageName.NA);
             ApiUser user = new ApiUser
             {
                 UserName = $"{dto.Prenom}_{dto.Nom}",
@@ -90,10 +89,10 @@ namespace UserApi.Controllers
                 Prenom = dto.Prenom,
                 Nom = dto.Nom,
                 Sexe = dto.Sexe,
-                IdStage = stage.StageId,
                 Argent = registrationSettings.defaultMoney,
                 CreatedAt = DateTime.Now,
                 Permis = PermisName.NA,
+                Stage = StageName.NA,
                 Points = 0,
                 NbSessions = 0,
                 NbSessionsPermis = 0,

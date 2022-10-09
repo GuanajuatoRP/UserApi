@@ -48,7 +48,7 @@ namespace UserApi.Controllers
             var seachTerms = searchModel?.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
             var query = _userContext.OriginalCars
                 .Include(c => c.Maker)
-                .Where(c => c.OnRoad);
+                .Where(c => c != null);
 
             foreach (var searchValue in seachTerms)
             {
@@ -130,65 +130,64 @@ namespace UserApi.Controllers
 
         [HttpPost]
         [Route("updateAllOriginalCars")]
-        public async Task<IActionResult> addOriginalCar([FromBody] IEnumerable<CreateOriginalCarDTO> dtos)
+        public async Task<IActionResult> addOriginalCar([FromBody] List<CreateOriginalCarDTO> dtos)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
+            List<OriginalCar> originalCars = await _userContext.OriginalCars.ToListAsync();
+
+            List<Maker> makers = await _userContext.Makers.ToListAsync();
+            List<OriginalCar> newOriginalCars = new List<OriginalCar>();
+            
             foreach (CreateOriginalCarDTO dto in dtos)
             {
-                OriginalCar? originalCar = await _userContext.OriginalCars
-                    .Include(c => c.Maker)
-                    .FirstOrDefaultAsync(oc => oc.CarOrdinal == dto.CarOrdinal);
-
-                if (originalCar != null) 
+                OriginalCar? originalCar = originalCars.FirstOrDefault(oc => oc.CarOrdinal == dto.CarOrdinal);
+                Maker? maker = makers.FirstOrDefault(m => m.Name == dto.Maker);
+                if (maker == null) return BadRequest($"Maker {dto.Maker} not found");
+                if (originalCar != null)
                 {
-                    Console.WriteLine($"La voiture {dto.Maker}, {dto.Model}, {dto.Year}, {dto.CarOrdinal} existe déja");
-                    //originalCar.MakerId = ;
-                    //originalCar.Maker Maker = ;
-                    originalCar.Model = originalCar.Model == dto.Model ? originalCar.Model : dto.Model;
-                    originalCar.Year = originalCar.Year == dto.Year ? originalCar.Year : dto.Year;
-                    originalCar.PowerHp = originalCar.PowerHp == dto.PowerHp ? originalCar.PowerHp : dto.PowerHp;
-                    originalCar.WeightKg = originalCar.WeightKg == dto.WeightKg ? originalCar.WeightKg : dto.WeightKg;
-                    originalCar.DriveTrain = originalCar.DriveTrain == dto.DriveTrain ? originalCar.DriveTrain : dto.DriveTrain;
-                    originalCar.Class = originalCar.Class == dto.Class ? originalCar.Class : dto.Class;
-                    originalCar.Pi = originalCar.Pi == dto.Pi ? originalCar.Pi : dto.Pi;
-                    originalCar.OnRoad = originalCar.OnRoad == dto.OnRoad ? originalCar.OnRoad : dto.OnRoad;
-                    originalCar.Speed = originalCar.Speed == dto.Speed ? originalCar.Speed : dto.Speed;
-                    originalCar.Handling = originalCar.Handling == dto.Handling ? originalCar.Handling : dto.Handling;
-                    originalCar.Accelerate = originalCar.Accelerate == dto.Accelerate ? originalCar.Accelerate : dto.Accelerate;
-                    originalCar.Launch = originalCar.Launch == dto.Launch ? originalCar.Launch : dto.Launch;
-                    originalCar.Braking = originalCar.Braking == dto.Braking ? originalCar.Braking : dto.Braking;
-                    originalCar.Offroad = originalCar.Offroad == dto.Offroad ? originalCar.Offroad : dto.Offroad;
-                    originalCar.RequiredDlc = originalCar.RequiredDlc == dto.RequiredDlc ? originalCar.RequiredDlc : dto.RequiredDlc;
-                    originalCar.Aviability = originalCar.Aviability == dto.Aviability ? originalCar.Aviability : dto.Aviability;
-                    originalCar.Price = originalCar.Price == dto.Price ? originalCar.Price : dto.Price;
-                    originalCar.Type = originalCar.Type == dto.Type ? originalCar.Type : dto.Type;
-                    originalCar.Rarity = originalCar.Rarity == dto.Rarity ? originalCar.Rarity : dto.Rarity;
-                    originalCar.WikiLink = originalCar.WikiLink == dto.WikiLink ? originalCar.WikiLink : dto.WikiLink;
-                    originalCar.PictureLink = originalCar.PictureLink == dto.PictureLink ? originalCar.PictureLink : dto.PictureLink;
 
-                    
+                    //la voiture existe alors force update 
+
+                    originalCar.MakerId = maker.IdMaker;
+                    originalCar.Maker = maker;
+                    originalCar.Model = dto.Model;
+                    originalCar.Year = dto.Year;
+                    originalCar.PowerHp = dto.PowerHp;
+                    originalCar.WeightKg = dto.WeightKg;
+                    originalCar.DriveTrain = dto.DriveTrain;
+                    originalCar.Class = dto.Class;
+                    originalCar.Pi = dto.Pi;
+                    originalCar.OnRoad = dto.OnRoad;
+                    originalCar.Speed = dto.Speed;
+                    originalCar.Handling = dto.Handling;
+                    originalCar.Accelerate = dto.Accelerate;
+                    originalCar.Launch = dto.Launch;
+                    originalCar.Braking = dto.Braking;
+                    originalCar.Offroad = dto.Offroad;
+                    originalCar.RequiredDlc = dto.RequiredDlc;
+                    originalCar.Aviability = dto.Aviability;
+                    originalCar.Price = dto.Price;
+                    originalCar.Type = dto.Type;
+                    originalCar.Rarity = dto.Rarity;
+                    originalCar.WikiLink = dto.WikiLink;
+                    originalCar.PictureLink = dto.PictureLink;
                 }
                 else 
                 {
-                    Maker? maker = await _userContext.Makers.FirstOrDefaultAsync(m => m.Name == dto.Maker);
-
-                    if (maker == null) return BadRequest($"Maker {dto.Maker} not found");
-                    else
-                    {
-                            originalCar = dto.ToEntity(maker);
-                        try
-                        {
-                            _userContext.OriginalCars.Add(originalCar);
-                            await _userContext.SaveChangesAsync();
-                        }
-                        catch (Exception e)
-                        {
-                            return BadRequest($"fail : {e.Message}");
-                            throw;
-                        }
-                    }
+                    originalCar = dto.ToEntity(maker);
+                    newOriginalCars.Add(originalCar);
                 }               
+            }
+
+            try
+            {
+                _userContext.OriginalCars.AddRange(newOriginalCars);
+                await _userContext.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
             }
 
 

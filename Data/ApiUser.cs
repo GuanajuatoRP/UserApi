@@ -13,8 +13,7 @@ namespace UserApi.Data
 
         public int Argent { get; set; }
         public PermisName Permis { get; set; }
-        public Guid? IdStage { get; set; }
-        public virtual Stage? Stage { get; set; }
+        public StageName Stage { get; set; }
         public int Points { get; set; }
         public int NbSessionsPermis { get; set; }
         public int NbSessionsPolice { get; set; }
