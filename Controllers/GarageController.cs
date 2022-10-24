@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using UserApi.Data;
 using UserApi.Data.Enum;
@@ -84,6 +83,33 @@ namespace UserApi.Controllers
 
 
             return car.ToModel(originalCar.ToModel());
+        }
+        
+        [HttpGet]
+        [Route("SearchCarByImat")]
+        public async Task<ActionResult<IEnumerable<CarDTO>>> SearchCarByImat([FromQuery] string? immatriculation)
+        {
+            if (immatriculation == null) return Ok(new List<CarDTO>());
+
+            var query = _userContext.Voitures
+                .Include(v => v.User)
+                .Where(v => v != null && v.Imatriculation.Contains(immatriculation));
+
+
+            var cars = await query.Take(25).ToListAsync();
+            
+                var originalCars = await _userContext.OriginalCars
+                                                .Include(c => c.Maker)
+                                                .Where(c => cars.Select(v => v.IdCar).Contains(c.IdCar))
+                                                .ToDictionaryAsync(c => c.IdCar);
+            
+
+
+            return cars.Select(v =>
+            {
+                originalCars.TryGetValue(v.IdCar, out var car);
+                return v.ToModel(car.ToModel());
+            }).ToList();
         }
 
         /// <summary>
