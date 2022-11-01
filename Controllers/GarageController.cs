@@ -214,6 +214,39 @@ namespace UserApi.Controllers
 
             return Ok($"Voiture Modifiée");
         }
+        
+        /// <summary>
+        /// Change le propriétaire d'une voiture
+        /// </summary>
+        /// <param name="KeyCar">Clé de la voiture a edit</param>
+        /// <param name="discordId">Discordid du nouveau propiétaire</param>
+        /// <response code="400 + Message"></response>
+        /// <response code="200">La voiture a été modifier</response>
+        [HttpPut]
+        [Route("{KeyCar}/{discordId}")]
+        public async Task<IActionResult> ChangeUser([FromRoute] Guid KeyCar, [FromRoute] string discordId)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            Voitures entity = await _userContext.Voitures.FirstOrDefaultAsync(e => e.KeyCar == KeyCar);
+            ApiUser user = await userManager.FindByEmailAsync(discordId);
+            if (entity == null) return BadRequest("Aucune voiture avec cet id");
+            if (user == null) return BadRequest("Aucun utilisateur avec cet id");
+
+            entity.User = user;
+            entity.IdUser = user.Id;
+
+            try
+            {
+                await _userContext.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return NotFound();
+            }
+
+            return Ok($"Propriétaire de la voiture modifiée");
+        }
 
         /// <summary>
         /// Suprime une voiture par sa clé

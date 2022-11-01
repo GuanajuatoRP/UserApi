@@ -80,6 +80,25 @@ namespace UserApi.Controllers
             return user.ToUserDTO();
         }
 
+        /// <summary>
+        /// Get plusieur users par leurs discord id
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<ActionResult<List<UserDTO>>> GetUersByDiscordId([FromBody] IEnumerable<string> DiscordIds)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            List<ApiUser>? users = await _userContext.Users
+                .Include(u => u.Voitures)
+                .Include(u => u.Sessions)
+                .Where(u => DiscordIds.Contains(u.Email))
+                .ToListAsync();
+
+            if (users == null) return BadRequest("Aucun utilisateur trouver avec ce discordId");
+
+            return users.Select(u => u.ToUserDTO()).ToList();
+        }
 
         /// <summary>
         /// Get tous les users
